@@ -2,7 +2,7 @@ server:
     port: 8080
 flyway:
     password: "root"
-    schemas: user_db
+    schemas: users_db
     url: "jdbc:mysql://localhost:3306/"
     user: "root"
 spring:
@@ -12,9 +12,8 @@ spring:
         import: "optional:configserver:http://localhost:8888/"
     datasource:
         password: "root"
-        url: "jdbc:mysql://localhost:3306/user_db"
+        url: "jdbc:mysql://localhost:3306/users_db"
         username: "root"
-
 
 eureka:
     instance:

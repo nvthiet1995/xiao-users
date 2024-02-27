@@ -8,6 +8,8 @@ public interface IUserService {
 
     void createUser(UserDto userDto);
 
-    List<UserDto> fetchAllAccount();
+    UserDto findUserById(Long id);
+
+    List<UserDto> fetchAllUsers();
 
 }

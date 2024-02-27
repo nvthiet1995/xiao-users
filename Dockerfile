@@ -12,4 +12,5 @@ ENTRYPOINT ["java", "-jar", "users-0.0.1-SNAPSHOT.jar"]
 
 
 #command
-#docker build . -t nvthiet1995/users:v1
+#mvn clean install
+#docker build . -t nvthiet1995/users
