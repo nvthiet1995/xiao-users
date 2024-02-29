@@ -1,0 +1,34 @@
+server:
+    port: 8080
+flyway:
+    password: "root"
+    schemas: user_db
+    url: "jdbc:mysql://localhost:3306/"
+    user: "root"
+spring:
+    application:
+        name: "users"
+    config:
+        import: "optional:configserver:http://localhost:8888/"
+    datasource:
+        password: "root"
+        url: "jdbc:mysql://localhost:3306/user_db"
+        username: "root"
+
+
+eureka:
+    instance:
+        preferIpAddress: true     # by default will use hostname, but we don't have DNS mapping so use Ip address
+    client:
+        fetchRegistry: true
+        registerWithEureka: true
+        serviceUrl:
+            defaultZone: http://localhost:8899/eureka/
+
+info:
+    app:
+        name: "accounts"
+        description: "Accounts application"
+        version: "1.0.0"
+
+
