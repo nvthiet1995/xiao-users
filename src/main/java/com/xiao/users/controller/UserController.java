@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<UserDto>> fetchAllUsers() {
+    public ResponseEntity<List<UserDto>> findAllUser() {
         List<UserDto> userDtos = iUserService.findAllUser();
         return ResponseEntity
                 .status(HttpStatus.OK)
