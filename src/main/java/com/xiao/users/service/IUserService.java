@@ -10,6 +10,6 @@ public interface IUserService {
 
     UserDto findUserById(Long id);
 
-    List<UserDto> fetchAllUsers();
+    List<UserDto> findAllUser();
 
 }
