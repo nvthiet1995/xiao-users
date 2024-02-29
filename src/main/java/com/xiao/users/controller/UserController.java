@@ -25,7 +25,7 @@ public class UserController {
         this.iUserService = iUserService;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody UserDto userDto) {
         iUserService.createUser(userDto);
         logger.info("Create user successfully!");
@@ -42,7 +42,7 @@ public class UserController {
                 .body(userDto);
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<List<UserDto>> findAllUser() {
         List<UserDto> userDtos = iUserService.findAllUser();
         return ResponseEntity
