@@ -7,9 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
-//@ComponentScan(basePackages = {"com.xiao"})
 public class UsersApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(UsersApplication.class, args);
 	}

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserController {
 
     private final IUserService iUserService;
@@ -42,9 +42,9 @@ public class UserController {
                 .body(userDto);
     }
 
-    @GetMapping("/fetchAll")
-    public ResponseEntity<List<UserDto>> fetchAllUsers() {
-        List<UserDto> userDtos = iUserService.fetchAllUsers();
+    @GetMapping("")
+    public ResponseEntity<List<UserDto>> findAllUser() {
+        List<UserDto> userDtos = iUserService.findAllUser();
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userDtos);
