@@ -6,9 +6,6 @@ import com.xiao.users.exception.ResourceNotFoundException;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
 import com.xiao.users.service.IUserService;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,16 +14,19 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements IUserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
+
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+    }
 
     @Override
-    public void createUser(UserDto userDto) {
+    public User createUser(UserDto userDto) {
         User user = userMapper.userDtoToUser(userDto);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override
