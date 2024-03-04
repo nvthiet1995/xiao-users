@@ -43,8 +43,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public Page<UserDto> findAllUser(int pages, int pageSize) {
-        Pageable pageable = PageRequest.of(pages, pageSize);
-        Page<User> usersPage = userRepository.findAll(pageable);
+        Page<User> usersPage = userRepository.findAll(PageRequest.of(pages, pageSize));
         return usersPage.map(userMapper::userToUserDto);
     }
 
