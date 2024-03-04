@@ -1,6 +1,7 @@
 package com.xiao.users.service;
 
 import com.xiao.users.dto.UserDto;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -10,6 +11,6 @@ public interface IUserService {
 
     UserDto findUserById(Long id);
 
-    List<UserDto> findAllUser();
+    Page<UserDto> findAllUser(int pages, int pageSize);
 
 }

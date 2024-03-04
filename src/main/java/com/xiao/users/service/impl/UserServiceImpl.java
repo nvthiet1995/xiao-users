@@ -9,6 +9,9 @@ import com.xiao.users.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,9 +42,10 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    public List<UserDto> findAllUser() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(userMapper::userToUserDto).collect(Collectors.toList());
+    public Page<UserDto> findAllUser(int pages, int pageSize) {
+        Pageable pageable = PageRequest.of(pages, pageSize);
+        Page<User> usersPage = userRepository.findAll(pageable);
+        return usersPage.map(userMapper::userToUserDto);
     }
 
 }
