@@ -6,10 +6,13 @@ import com.xiao.users.exception.ResourceNotFoundException;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
 import com.xiao.users.service.IUserService;
-import org.springframework.stereotype.Service;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -39,9 +42,9 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    public List<UserDto> findAllUser() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(userMapper::userToUserDto).collect(Collectors.toList());
+    public Page<UserDto> findAllUser(int pages, int pageSize) {
+        Page<User> usersPage = userRepository.findAll(PageRequest.of(pages, pageSize));
+        return usersPage.map(userMapper::userToUserDto);
     }
 
 }
