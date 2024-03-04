@@ -22,7 +22,7 @@ class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
-    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);;
+    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     private UserServiceImpl userService;
 
