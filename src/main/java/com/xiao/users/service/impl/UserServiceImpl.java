@@ -12,6 +12,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 
 @Service
@@ -27,9 +28,9 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User createUser(UserDto userDto) {
+    public void createUser(UserDto userDto) {
         User user = userMapper.userDtoToUser(userDto);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     @Override

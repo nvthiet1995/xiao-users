@@ -10,7 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Fail.fail;
@@ -83,5 +88,20 @@ class UserServiceImplTest {
         } catch (Exception ex) {
             assertEquals(ex.getMessage(), String.format("%s not found with the given input data %s : '%s'", "User", "id", userId));
         }
+    }
+
+    @Test
+    void testFindAllUser(){
+
+        List<User> userList = Arrays.asList(UserUtil.buildUser(), UserUtil.buildUser());
+        Page<User> expectedPage = new PageImpl<>(userList, PageRequest.of(0, 10), userList.size());
+        when(userRepository.findAll(PageRequest.of(0,10))).thenReturn(expectedPage);
+
+        Page<UserDto> actualPage = userService.findAllUser(0, 10);
+        Page<UserDto> expectedResult = expectedPage.map(userMapper::userToUserDto);
+
+        assertEquals(expectedResult, actualPage);
+
+        verify(userRepository, times(1)).findAll(PageRequest.of(0,10));
     }
 }
