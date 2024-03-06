@@ -100,7 +100,13 @@ class UserServiceImplTest {
         Page<UserDto> actualPage = userService.findAllUser(0, 10);
         Page<UserDto> expectedResult = expectedPage.map(userMapper::userToUserDto);
 
-        assertEquals(expectedResult, actualPage);
+        assertEquals(expectedResult.getContent(), actualPage.getContent());
+        assertEquals(expectedResult.getSize(), actualPage.getSize());
+        assertEquals(expectedResult.getNumber(), actualPage.getNumber());
+        assertEquals(expectedResult.getTotalPages(), actualPage.getTotalPages());
+        assertEquals(expectedResult.getTotalElements(), actualPage.getTotalElements());
+        assertEquals(expectedResult.hasNext(), actualPage.hasNext());
+        assertEquals(expectedResult.hasPrevious(), actualPage.hasPrevious());
 
         verify(userRepository, times(1)).findAll(PageRequest.of(0,10));
     }

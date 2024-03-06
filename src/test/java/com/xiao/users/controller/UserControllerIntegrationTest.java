@@ -15,9 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -93,4 +94,27 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.errorMessage").value(String.format("User not found with the given input data id : '%s'", userId)));
     }
 
+    @Test
+    void testFindAllUser_200() throws Exception {
+        UserDto userDto1 = UserUtil.buildUserDto();
+        UserDto userDto2 = UserUtil.buildUserDto();
+
+        User user1 = userRepository.save(userMapper.userDtoToUser(userDto1));
+        User user2 = userRepository.save(userMapper.userDtoToUser(userDto2));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users").param("pages", "0").param("pageSize", "10")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.totalElements", is(2)))
+                .andExpect(jsonPath("$.totalPages", is(1)))
+                .andExpect(jsonPath("$.pageable.pageNumber", is(0)))
+                .andExpect(jsonPath("$.pageable.pageSize", is(10)))
+                .andExpect(jsonPath("$.content[0].username", is(user1.getUsername())))
+                .andExpect(jsonPath("$.content[0].password", is(user1.getPassword())))
+                .andExpect(jsonPath("$.content[0].emailAddress", is(user1.getEmailAddress())))
+                .andExpect(jsonPath("$.content[1].username", is(user2.getUsername())))
+                .andExpect(jsonPath("$.content[1].emailAddress", is(user2.getEmailAddress())))
+                .andExpect(jsonPath("$.content[1].password", is(user2.getPassword())));
+    }
 }
