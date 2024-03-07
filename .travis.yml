@@ -1,0 +1,20 @@
+language: java
+jdk:
+  - openjdk17
+
+services:
+  - docker
+
+before_install:
+  - chmod +x mvnw
+
+install:
+  - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
+script:
+  - ./mvnw test
+
+after_success:
+  - docker build -t $DOCKER_USERNAME/demo:latest .
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push $DOCKER_USERNAME/demo:latest
