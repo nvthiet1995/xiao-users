@@ -110,4 +110,19 @@ class UserServiceImplTest {
 
         verify(userRepository, times(1)).findAll(PageRequest.of(0,10));
     }
+
+    @Test
+    void testFindAllUser_whenUserRepositoryGotException(){
+        when(userRepository.findAll(PageRequest.of(0,10))).thenThrow(new RuntimeException("exception"));
+
+        try {
+            userService.findAllUser(0,10);
+            fail("Should throw exception");
+        } catch (RuntimeException ex) {
+            assertEquals(ex.getMessage(), "exception");
+        }
+
+        verify(userRepository, times(1)).findAll(PageRequest.of(0,10));
+    }
+
 }
