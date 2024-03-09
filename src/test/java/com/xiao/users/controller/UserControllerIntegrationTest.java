@@ -154,4 +154,73 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.pageable.pageSize", is(10)));
 
     }
+
+    @Test
+    void testUpdateUser_201() throws Exception {
+        User userSaved = userRepository.save(UserUtil.buildUser());
+        UserDto userUpdate = UserUtil.buildUserDto();
+        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
+        userUpdate.setPassword(userUpdate.getPassword()+"_updated");
+        userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.asJsonString(userUpdate))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userSaved.getId()))
+                .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
+                .andExpect(jsonPath("$.password").value(userUpdate.getPassword()))
+                .andExpect(jsonPath("$.emailAddress").value(userUpdate.getEmailAddress()));
+    }
+
+    @Test
+    void testUpdateUser_400() throws Exception {
+        User userSaved = userRepository.save(UserUtil.buildUser());
+        UserDto userUpdate = UserUtil.buildUserDto();
+        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
+        userUpdate.setPassword(userUpdate.getPassword()+"_updated");
+        userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
+        userUpdate.setEmailAddress("test_gmail.com");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.asJsonString(userUpdate))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.emailAddress").value("Email is not valid"));
+    }
+
+    @Test
+    void testUpdateUser_415() throws Exception {
+        User userSaved = userRepository.save(UserUtil.buildUser());
+        UserDto userUpdate = UserUtil.buildUserDto();
+        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
+        userUpdate.setPassword(userUpdate.getPassword()+"_updated");
+        userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
+        userUpdate.setEmailAddress("test_gmail.com");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
+                .contentType(MediaType.APPLICATION_CBOR)
+                .content(JsonUtil.asJsonString(userUpdate))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(415));
+    }
+
+    @Test
+    void testUpdateUser_whenNotFoundUserId() throws Exception {
+        Long userId = 999L;
+        UserDto userUpdate = UserUtil.buildUserDto();
+        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
+        userUpdate.setPassword(userUpdate.getPassword()+"_updated");
+        userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.asJsonString(userUpdate))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorCode").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.errorMessage").value(String.format("User not found with the given input data id : '%s'", userId)));
+    }
 }

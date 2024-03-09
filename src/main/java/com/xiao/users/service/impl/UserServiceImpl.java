@@ -2,20 +2,13 @@ package com.xiao.users.service.impl;
 
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.entity.User;
-import com.xiao.users.exception.DuplicateUserException;
 import com.xiao.users.exception.ResourceNotFoundException;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
 import com.xiao.users.service.IUserService;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 
 @Service
@@ -53,21 +46,13 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserDto updateUser(Long userId, UserDto userDto){
-        if(userRepository.findById(userId).isEmpty()){
-            throw new ResourceNotFoundException("User", "id", String.valueOf(userId));
-        }
-
-        if(isExistEmailOrUserName(userId, userDto)){
-            throw new DuplicateUserException(userDto.getUsername(), userDto.getEmailAddress());
-        }
+        userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", String.valueOf(userId))
+        );
 
         User userDataUpdate = userMapper.userDtoToUser(userDto);
         userDataUpdate.setId(userId);
         return userMapper.userToUserDto(userRepository.save(userDataUpdate));
     }
 
-    private boolean isExistEmailOrUserName(Long userId ,UserDto userDto){
-        Optional<User> userOptional = userRepository.findUserByEmailOrUserNameWithId(userId, userDto.getUsername(), userDto.getEmailAddress());
-        return userOptional.isPresent();
-    }
 }
