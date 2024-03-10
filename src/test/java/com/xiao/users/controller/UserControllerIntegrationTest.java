@@ -6,6 +6,7 @@ import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
 import com.xiao.users.util.JsonUtil;
 import com.xiao.users.util.UserUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -34,6 +34,10 @@ class UserControllerIntegrationTest {
     @Autowired
     private UserMapper userMapper;
 
+    @AfterEach
+    public void tearDown(){
+        userRepository.deleteAll();
+    }
     @Test
     void testCreateAccount_201() throws Exception {
         UserDto userDto = UserUtil.buildUserDto();
