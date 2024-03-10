@@ -1,6 +1,9 @@
 #Start with a base image containing Java runtime
 FROM openjdk:17-jdk-slim
 
+#Information around who maintains the image
+MAINTAINER thietnguyen
+
 WORKDIR /app
 
 # Add the application's jar to the image
