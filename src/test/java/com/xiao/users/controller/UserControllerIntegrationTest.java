@@ -123,6 +123,39 @@ class UserControllerIntegrationTest {
     }
 
     @Test
+    void testFindAllUser_200_withPageSizeIs1() throws Exception {
+        UserDto userDto1 = UserUtil.buildUserDto();
+        UserDto userDto2 = UserUtil.buildUserDto();
+
+        User userPage1 = userRepository.save(userMapper.userDtoToUser(userDto1));
+        User userPage2 = userRepository.save(userMapper.userDtoToUser(userDto2));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users").param("pages", "0").param("pageSize", "1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.totalElements", is(2)))
+                .andExpect(jsonPath("$.totalPages", is(2)))
+                .andExpect(jsonPath("$.pageable.pageNumber", is(0)))
+                .andExpect(jsonPath("$.pageable.pageSize", is(1)))
+                .andExpect(jsonPath("$.content[0].username", is(userPage1.getUsername())))
+                .andExpect(jsonPath("$.content[0].password", is(userPage1.getPassword())))
+                .andExpect(jsonPath("$.content[0].emailAddress", is(userPage1.getEmailAddress())));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users").param("pages", "1").param("pageSize", "1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.totalElements", is(2)))
+                .andExpect(jsonPath("$.totalPages", is(2)))
+                .andExpect(jsonPath("$.pageable.pageNumber", is(1)))
+                .andExpect(jsonPath("$.pageable.pageSize", is(1)))
+                .andExpect(jsonPath("$.content[0].username", is(userPage2.getUsername())))
+                .andExpect(jsonPath("$.content[0].password", is(userPage2.getPassword())))
+                .andExpect(jsonPath("$.content[0].emailAddress", is(userPage2.getEmailAddress())));
+    }
+
+    @Test
     void testFindAllUser_whenMissingParams() throws Exception {
         UserDto userDto1 = UserUtil.buildUserDto();
         UserDto userDto2 = UserUtil.buildUserDto();
