@@ -125,6 +125,7 @@ class UserServiceImplTest {
         verify(userRepository, times(1)).findAll(PageRequest.of(0,10));
     }
 
+
     @Test
     void testUpdateUser() {
         Long userIdToUpdate = 2L;
