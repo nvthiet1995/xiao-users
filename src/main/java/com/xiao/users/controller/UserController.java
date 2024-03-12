@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Validated(UserDto.EmailValidation.class) @RequestBody UserDto userDto){
         UserDto userResponse = iUserService.updateUser(id, userDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
