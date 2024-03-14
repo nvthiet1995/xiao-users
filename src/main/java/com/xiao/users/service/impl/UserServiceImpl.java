@@ -19,19 +19,19 @@ public class UserServiceImpl implements IUserService {
     private final UserRepository userRepository;
 
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void createUser(UserDto userDto) {
         User user = userMapper.userDtoToUser(userDto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        String passwordEncode = passwordEncoder.encode(user.getPassword());
+        user.setPassword(passwordEncode);
         userRepository.save(user);
     }
 
