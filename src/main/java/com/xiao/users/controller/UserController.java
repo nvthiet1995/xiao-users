@@ -56,7 +56,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Validated(UserDto.EmailValidation.class) @RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto){
         UserDto userResponse = iUserService.updateUser(id, userDto);
         return ResponseEntity
                 .status(HttpStatus.OK)

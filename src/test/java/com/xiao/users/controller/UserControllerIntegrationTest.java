@@ -215,17 +215,16 @@ class UserControllerIntegrationTest {
     void testUpdateUser_400() throws Exception {
         User userSaved = userRepository.save(UserUtil.buildUser());
         UserDto userUpdate = UserUtil.buildUserDto();
-        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
-        userUpdate.setPassword(userUpdate.getPassword()+"_updated");
-        userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
-        userUpdate.setEmailAddress("test_gmail.com");
+        userUpdate.setUsername("");
+        userUpdate.setPassword("");
+        userUpdate.setEmailAddress("");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.asJsonString(userUpdate))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.emailAddress").value("Email is not valid"));
+                .andExpect(jsonPath("$.errorMessage").value("Enter at least 1 piece of information"));
     }
 
     @Test
@@ -235,7 +234,7 @@ class UserControllerIntegrationTest {
         userUpdate.setUsername(userUpdate.getUsername()+"_updated");
         userUpdate.setPassword(userUpdate.getPassword()+"_updated");
         userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
-        userUpdate.setEmailAddress("test_gmail.com");
+        userUpdate.setEmailAddress("test@gmail.com");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
                 .contentType(MediaType.APPLICATION_CBOR)

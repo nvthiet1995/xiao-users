@@ -2,6 +2,7 @@ package com.xiao.users.service.impl;
 
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.entity.User;
+import com.xiao.users.exception.EmptyAllFieldsUpdateException;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
 import com.xiao.users.util.UserUtil;
@@ -13,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
@@ -169,6 +172,28 @@ class UserServiceImplTest {
         } catch (Exception ex) {
             assertEquals(ex.getMessage(), String.format("%s not found with the given input data %s : '%s'", "User", "id", userIdToUpdate));
         }
+    }
+
+    @Test
+    void testUpdateUser_whenEmptyAllField() {
+        Long userIdToUpdate = 2L;
+        User existingUser = UserUtil.buildUser();
+        existingUser.setId(userIdToUpdate);
+
+        UserDto userUpdate = UserUtil.buildUserDto();
+        userUpdate.setUsername("");
+        userUpdate.setPassword("");
+        userUpdate.setEmailAddress("");
+        userUpdate.setId(userIdToUpdate);
+        when(userRepository.findById(userIdToUpdate)).thenReturn(Optional.of(existingUser));
+
+
+        EmptyAllFieldsUpdateException exception = assertThrows(EmptyAllFieldsUpdateException.class, () -> {
+            userService.updateUser(userIdToUpdate, userUpdate);
+        });
+
+        assertEquals("Enter at least 1 piece of information", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
     }
 
     @Test
