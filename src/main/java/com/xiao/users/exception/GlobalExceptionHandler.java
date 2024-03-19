@@ -5,18 +5,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,21 +27,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         List<ObjectError> validationErrorList = ex.getBindingResult().getAllErrors();
 
         validationErrorList.forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String validationMsg = error.getDefaultMessage();
-            validationErrors.put(fieldName, validationMsg);
+            validationErrors.put(((FieldError) error).getField(), error.getDefaultMessage());
         });
-        return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
+
+        ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
+            "Your Method Argument Is Not Valid",
+            HttpStatus.BAD_REQUEST,
+            "VALIDATION ERROR",
+            validationErrors,
+            null
+        );
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGlobalException(Exception exception,
                                                                   WebRequest webRequest) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-                webRequest.getDescription(false),
-                HttpStatus.INTERNAL_SERVER_ERROR,
                 exception.getMessage(),
-                LocalDateTime.now()
+                HttpStatus.NOT_FOUND,
+                "Global Exception",
+                new HashMap<>(),
+                null
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -54,10 +58,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(ResourceNotFoundException exception,
                                                                             WebRequest webRequest) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-                webRequest.getDescription(false),
-                HttpStatus.NOT_FOUND,
                 exception.getMessage(),
-                LocalDateTime.now()
+                HttpStatus.NOT_FOUND,
+                "Resource Not Found Error",
+                new HashMap<>(),
+                null
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
     }
@@ -66,10 +71,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleEmptyAllFieldsUpdateException(EmptyAllFieldsUpdateException exception,
                                                                             WebRequest webRequest) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-                webRequest.getDescription(false),
-                HttpStatus.BAD_REQUEST,
                 exception.getMessage(),
-                LocalDateTime.now()
+                exception.getHttpStatus(),
+                "VALIDATION ERROR",
+                new HashMap<>(),
+                null
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
