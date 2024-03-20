@@ -47,19 +47,35 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserDto updateUser(Long userId, UserDto userDto){
-        userDto.setId(userId);
-        userRepository.findById(userId).orElseThrow(
+        User existingUser = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", String.valueOf(userId))
         );
 
-        if(userDto.getUsername().isEmpty() && userDto.getEmailAddress().isEmpty() && userDto.getPassword().isEmpty()){
-            throw new EmptyAllFieldsUpdateException();
-        }
-
-        User userDataUpdate = userMapper.userDtoToUser(userDto);
+        User userDataUpdate = mapValueFieldUpdate(existingUser, userMapper.userDtoToUser(userDto));
         return userMapper.userToUserDto(userRepository.save(userDataUpdate));
     }
 
+    private User mapValueFieldUpdate(User userExist, User userInput) {
+        userInput.setId(userExist.getId());
 
+        if(userInput.getUsername().isEmpty()){
+            userInput.setUsername(userExist.getUsername());
+        }else{
+            userInput.setUsername(userInput.getUsername());
+        }
+
+        if(userInput.getEmailAddress().isEmpty()){
+            userInput.setEmailAddress(userExist.getEmailAddress());
+        }else{
+            userInput.setEmailAddress(userInput.getEmailAddress());
+        }
+
+        if(userInput.getPassword().isEmpty()){
+            userInput.setPassword(userExist.getPassword());
+        }else{
+            userInput.setPassword(userInput.getPassword());
+        }
+        return userInput;
+    }
 
 }

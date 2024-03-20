@@ -10,5 +10,8 @@ public interface UserMapper {
     UserDto userToUserDto(User user);
 
     User userDtoToUser(UserDto userDto);
+    default String mapNullableString(String value) {
+        return value != null ? value : "";
+    }
 
 }

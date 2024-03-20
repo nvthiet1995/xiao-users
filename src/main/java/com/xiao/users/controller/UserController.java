@@ -1,5 +1,6 @@
 package com.xiao.users.controller;
 
+import com.xiao.users.constants.FieldValueEmpty;
 import com.xiao.users.constants.UserConstants;
 import com.xiao.users.dto.ResponseDto;
 import com.xiao.users.dto.UserDto;
@@ -13,10 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@Validated
 public class UserController {
 
     private final IUserService iUserService;
@@ -56,7 +57,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @FieldValueEmpty(fields={"username", "emailAddress", "password"}) @RequestBody UserDto userDto){
         UserDto userResponse = iUserService.updateUser(id, userDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
