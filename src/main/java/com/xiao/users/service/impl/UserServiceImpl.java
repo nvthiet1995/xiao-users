@@ -2,7 +2,6 @@ package com.xiao.users.service.impl;
 
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.entity.User;
-import com.xiao.users.exception.EmptyAllFieldsUpdateException;
 import com.xiao.users.exception.ResourceNotFoundException;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements IUserService {
-
     private final UserRepository userRepository;
 
     private final UserMapper userMapper;

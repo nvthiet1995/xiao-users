@@ -1,15 +1,19 @@
-package com.xiao.users.constants;
+package com.xiao.users.validator;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.BeanWrapperImpl;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+
+import java.util.Arrays;
 import java.util.List;
 
-public class FieldValueEmptyValidator implements ConstraintValidator<FieldValueEmpty, Object>{
+public class FieldValueEmptyValidator implements ConstraintValidator<FieldValueEmpty, Object> {
     private List<String> fieldList;
     @Override
     public void initialize(FieldValueEmpty constraintAnnotation) {
+        System.out.println("enter here");
+        System.out.println(Arrays.toString(constraintAnnotation.fields()));
         fieldList = List.of(constraintAnnotation.fields());
     }
 
