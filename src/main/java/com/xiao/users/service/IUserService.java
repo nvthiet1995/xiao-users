@@ -1,6 +1,7 @@
 package com.xiao.users.service;
 
 import com.xiao.users.dto.UserDto;
+import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
 import org.springframework.data.domain.Page;
 
@@ -14,6 +15,6 @@ public interface IUserService {
 
     Page<UserDto> findAllUser(int pages, int pageSize);
 
-    UserDto updateUser(Long userId, UserDto userDto);
+    UserDto updateUser(Long userId, UserUpdateDto userDto);
 
 }

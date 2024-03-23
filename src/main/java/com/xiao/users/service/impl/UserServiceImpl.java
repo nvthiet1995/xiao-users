@@ -1,6 +1,7 @@
 package com.xiao.users.service.impl;
 
 import com.xiao.users.dto.UserDto;
+import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
 import com.xiao.users.exception.ResourceNotFoundException;
 import com.xiao.users.mapper.UserMapper;
@@ -9,6 +10,8 @@ import com.xiao.users.service.IUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 
 @Service
@@ -44,36 +47,22 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserDto updateUser(Long userId, UserDto userDto){
+    public UserDto updateUser(Long userId, UserUpdateDto userDto){
         User existingUser = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", String.valueOf(userId))
         );
 
-        User userDataUpdate = mapValueFieldUpdate(existingUser, userMapper.userDtoToUser(userDto));
-        return userMapper.userToUserDto(userRepository.save(userDataUpdate));
+        existingUser = mapValueFieldUpdate(existingUser, userDto);
+        return userMapper.userToUserDto(userRepository.save(existingUser));
     }
 
-    private User mapValueFieldUpdate(User userExist, User userInput) {
-        userInput.setId(userExist.getId());
-
-        if(userInput.getUsername().isEmpty()){
-            userInput.setUsername(userExist.getUsername());
-        }else{
-            userInput.setUsername(userInput.getUsername());
-        }
-
-        if(userInput.getEmailAddress().isEmpty()){
-            userInput.setEmailAddress(userExist.getEmailAddress());
-        }else{
-            userInput.setEmailAddress(userInput.getEmailAddress());
-        }
-
-        if(userInput.getPassword().isEmpty()){
-            userInput.setPassword(userExist.getPassword());
-        }else{
-            userInput.setPassword(userInput.getPassword());
-        }
-        return userInput;
+    private User mapValueFieldUpdate(User existingUser, UserUpdateDto userDto) {
+        return User.builder()
+                .id(existingUser.getId())
+                .username(Objects.isNull(userDto.getUsername()) ? existingUser.getUsername() : userDto.getUsername())
+                .emailAddress(Objects.isNull(userDto.getEmailAddress()) ? existingUser.getEmailAddress() : userDto.getEmailAddress())
+                .password(Objects.isNull(userDto.getPassword()) ? existingUser.getPassword() : userDto.getPassword())
+                .build();
     }
 
 }

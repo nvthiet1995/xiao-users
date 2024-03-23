@@ -10,15 +10,12 @@ import lombok.Data;
 
 @Data
 @Builder
-@CheckAllValueEmpty(fields = {"username", "password", "emailAddress"}, message = "Enter at least 1 piece of information")
-public class UserDto {
+@CheckAllValueEmpty(fields = {"username", "password", "emailAddress"})
+public class UserUpdateDto {
 
     private Long id;
-
-    @NotEmpty(message = "Missing username")
     private String username;
 
-    @NotEmpty(message = "Missing password")
     @Size(min = 8, message = "Password length must be greater then 8")
     private String password;
 

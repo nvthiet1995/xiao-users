@@ -1,6 +1,8 @@
 package com.xiao.users.exception;
 
 import com.xiao.users.dto.ErrorResponseDto;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -62,15 +65,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(EmptyAllFieldsUpdateException.class)
-    public ResponseEntity<ErrorResponseDto> handleEmptyAllFieldsUpdateException(EmptyAllFieldsUpdateException exception,
-                                                                            WebRequest webRequest) {
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponseDto> handleEmptyAllFieldsUpdateException(ConstraintViolationException constraintViolationException, WebRequest webRequest) {
+        Set<ConstraintViolation<?>> violations = constraintViolationException.getConstraintViolations();
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-                webRequest.getDescription(false),
-                HttpStatus.BAD_REQUEST,
-                exception.getMessage(),
-                LocalDateTime.now()
+            webRequest.getDescription(false),
+            HttpStatus.NOT_FOUND,
+            "",
+            LocalDateTime.now()
         );
+        if (!violations.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            violations.forEach(violation -> builder.append(" ").append(violation.getMessage()));
+            errorResponseDTO.setErrorMessage(builder.toString());
+        } else {
+            errorResponseDTO.setErrorMessage("ConstraintViolationException occurred");
+        }
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
 }

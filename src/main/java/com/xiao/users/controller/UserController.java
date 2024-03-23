@@ -3,9 +3,9 @@ package com.xiao.users.controller;
 import com.xiao.users.constants.UserConstants;
 import com.xiao.users.dto.ResponseDto;
 import com.xiao.users.dto.UserDto;
+import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.exception.EmptyAllFieldsUpdateException;
 import com.xiao.users.service.IUserService;
-import com.xiao.users.validator.FieldValueEmpty;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,14 +58,10 @@ public class UserController {
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id,
-                                              @FieldValueEmpty(fields = {"username", "password", "emailAddress"})
-                                              @RequestBody UserDto userDto,
-                                              BindingResult errors
+                                              @Valid
+                                              @RequestBody UserUpdateDto userUpdateDto
     ){
-        if(errors.hasErrors()){
-            throw new EmptyAllFieldsUpdateException();
-        }
-        UserDto userResponse = iUserService.updateUser(id, userDto);
+        UserDto userResponse = iUserService.updateUser(id, userUpdateDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userResponse);

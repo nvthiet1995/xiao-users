@@ -1,6 +1,7 @@
 package com.xiao.users.service.impl;
 
 import com.xiao.users.dto.UserDto;
+import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
 import com.xiao.users.exception.EmptyAllFieldsUpdateException;
 import com.xiao.users.mapper.UserMapper;
@@ -135,14 +136,14 @@ class UserServiceImplTest {
         User existingUser = UserUtil.buildUser();
         existingUser.setId(userIdToUpdate);
 
-        UserDto userUpdate = UserUtil.buildUserDto();
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
         userUpdate.setUsername(userUpdate.getUsername()+"_updated");
         userUpdate.setPassword(userUpdate.getPassword()+"_updated");
         userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
         userUpdate.setId(userIdToUpdate);
 
         when(userRepository.findById(userIdToUpdate)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(any(User.class))).thenReturn(userMapper.userDtoToUser(userUpdate));
+        when(userRepository.save(any(User.class))).thenReturn(userMapper.userUpdateDtoToUser(userUpdate));
 
         UserDto actualUser = userService.updateUser(userIdToUpdate, userUpdate);
         assertEquals(actualUser.getId(), userUpdate.getId());
@@ -158,7 +159,7 @@ class UserServiceImplTest {
     void testUpdateUser_whenNotFound() {
         Long userIdToUpdate = 2L;
 
-        UserDto userUpdate = UserUtil.buildUserDto();
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
         userUpdate.setUsername(userUpdate.getUsername()+"_updated");
         userUpdate.setPassword(userUpdate.getPassword()+"_updated");
         userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
@@ -180,7 +181,7 @@ class UserServiceImplTest {
         User existingUser = UserUtil.buildUser();
         existingUser.setId(userIdToUpdate);
 
-        UserDto userUpdate = UserUtil.buildUserDto();
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
         userUpdate.setUsername("");
         userUpdate.setPassword("");
         userUpdate.setEmailAddress("");
@@ -202,7 +203,7 @@ class UserServiceImplTest {
         User existingUser = UserUtil.buildUser();
         existingUser.setId(userIdToUpdate);
 
-        UserDto userUpdate = UserUtil.buildUserDto();
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
         userUpdate.setUsername(userUpdate.getUsername()+"_updated");
         userUpdate.setPassword(userUpdate.getPassword()+"_updated");
         userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");

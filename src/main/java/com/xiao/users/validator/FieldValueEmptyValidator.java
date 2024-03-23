@@ -1,5 +1,6 @@
 package com.xiao.users.validator;
 
+import com.xiao.users.exception.EmptyAllFieldsUpdateException;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.BeanWrapperImpl;
@@ -8,12 +9,10 @@ import org.springframework.beans.BeanWrapperImpl;
 import java.util.Arrays;
 import java.util.List;
 
-public class FieldValueEmptyValidator implements ConstraintValidator<FieldValueEmpty, Object> {
+public class FieldValueEmptyValidator implements ConstraintValidator<CheckAllValueEmpty, Object> {
     private List<String> fieldList;
     @Override
-    public void initialize(FieldValueEmpty constraintAnnotation) {
-        System.out.println("enter here");
-        System.out.println(Arrays.toString(constraintAnnotation.fields()));
+    public void initialize(CheckAllValueEmpty constraintAnnotation) {
         fieldList = List.of(constraintAnnotation.fields());
     }
 
@@ -26,7 +25,7 @@ public class FieldValueEmptyValidator implements ConstraintValidator<FieldValueE
                 return true;
             }
         }
-        return false;
+        throw new EmptyAllFieldsUpdateException();
     }
 
 }
