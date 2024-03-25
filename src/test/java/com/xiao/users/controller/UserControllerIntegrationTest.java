@@ -61,7 +61,9 @@ class UserControllerIntegrationTest {
                         .content(JsonUtil.asJsonString(userDto))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.username").value("Missing username"));
+                .andExpect(jsonPath("$.message").value("Your Method Argument Is Not Valid"))
+                .andExpect(jsonPath("$.title").value("VALIDATION ERROR"))
+                .andExpect(jsonPath("$.errors.username").value("Missing username"));
     }
 
     @Test
@@ -94,8 +96,9 @@ class UserControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", userId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.errorCode").value("NOT_FOUND"))
-                .andExpect(jsonPath("$.errorMessage").value(String.format("User not found with the given input data id : '%s'", userId)));
+                .andExpect(jsonPath("$.code").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.title").value("Resource Not Found Error"))
+                .andExpect(jsonPath("$.message").value(String.format("User not found with the given input data id : '%s'", userId)));
     }
 
     @Test
@@ -224,7 +227,8 @@ class UserControllerIntegrationTest {
                 .content(JsonUtil.asJsonString(userUpdate))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errorMessage").value("Enter at least 1 piece of information"));
+                .andExpect(jsonPath("$.title").value("VALIDATION ERROR"))
+                .andExpect(jsonPath("$.message").value("Enter at least 1 piece of information"));
     }
 
     @Test
@@ -256,7 +260,8 @@ class UserControllerIntegrationTest {
                 .content(JsonUtil.asJsonString(userUpdate))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.errorCode").value("NOT_FOUND"))
-                .andExpect(jsonPath("$.errorMessage").value(String.format("User not found with the given input data id : '%s'", userId)));
+                .andExpect(jsonPath("$.code").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.title").value("Resource Not Found Error"))
+                .andExpect(jsonPath("$.message").value(String.format("User not found with the given input data id : '%s'", userId)));
     }
 }
