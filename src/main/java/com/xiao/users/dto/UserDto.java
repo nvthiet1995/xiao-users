@@ -19,7 +19,7 @@ public class UserDto {
     @Size(min = 8, message = "Password length must be greater then 8")
     private String password;
 
-    @Email(message = "Email is not valid", groups = EmailValidation.class)
+    @Email(message = "Email is not valid")
     private String emailAddress;
 
     public interface EmailValidation{}
