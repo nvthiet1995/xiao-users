@@ -240,7 +240,7 @@ class UserControllerIntegrationTest {
                 .content(JsonUtil.asJsonString(userUpdate))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.userUpdateDto").value("Enter at least 1 piece of information"));
+                .andExpect(jsonPath("$.userUpdateDto").value("Please enter at least one piece when updating the user"));
     }
 
     @Test

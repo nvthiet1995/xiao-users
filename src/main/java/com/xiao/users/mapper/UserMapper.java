@@ -13,8 +13,5 @@ public interface UserMapper {
     User userDtoToUser(UserDto userDto);
 
     User userUpdateDtoToUser(UserUpdateDto user);
-    default String mapNullableString(String value) {
-        return value != null ? value : "";
-    }
 
 }

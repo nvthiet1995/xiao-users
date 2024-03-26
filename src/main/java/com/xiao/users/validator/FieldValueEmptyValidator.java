@@ -6,6 +6,7 @@ import org.springframework.beans.BeanWrapperImpl;
 
 
 import java.util.List;
+import java.util.Objects;
 
 public class FieldValueEmptyValidator implements ConstraintValidator<CheckAllValueEmpty, Object> {
     private List<String> fieldList;
@@ -19,7 +20,7 @@ public class FieldValueEmptyValidator implements ConstraintValidator<CheckAllVal
                            ConstraintValidatorContext context) {
         for (String fieldName : fieldList){
             Object valueField = new BeanWrapperImpl(value).getPropertyValue(fieldName);
-            if(valueField != null && !valueField.toString().isEmpty()){
+            if(!Objects.isNull(valueField) && !valueField.toString().isEmpty()){
                 return true;
             }
         }
