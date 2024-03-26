@@ -10,7 +10,7 @@ public class UserUtil {
         return UserUpdateDto.builder()
                 .username("abc_update")
                 .emailAddress("abc_update@gmail.com")
-                .password("abcPassword_update")
+                .password("passwordUpdate")
                 .build();
     }
 
