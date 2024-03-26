@@ -22,5 +22,4 @@ public class UserDto {
     @Email(message = "Email is not valid")
     private String emailAddress;
 
-    public interface EmailValidation{}
 }
