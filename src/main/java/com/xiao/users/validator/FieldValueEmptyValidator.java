@@ -2,6 +2,7 @@ package com.xiao.users.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.bouncycastle.util.Strings;
 import org.springframework.beans.BeanWrapperImpl;
 
 
@@ -20,7 +21,7 @@ public class FieldValueEmptyValidator implements ConstraintValidator<CheckAllVal
                            ConstraintValidatorContext context) {
         for (String fieldName : fieldList){
             Object valueField = new BeanWrapperImpl(value).getPropertyValue(fieldName);
-            if(!Objects.isNull(valueField) && !valueField.toString().isEmpty()){
+            if(!Objects.isNull(valueField) && !String.valueOf(valueField).isEmpty()){
                 return true;
             }
         }
