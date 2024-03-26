@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -53,7 +52,6 @@ public class UserController {
                 .status(HttpStatus.OK)
                 .body(userDtos);
     }
-
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto){
