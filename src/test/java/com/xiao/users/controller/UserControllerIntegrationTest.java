@@ -14,11 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -40,10 +42,12 @@ class UserControllerIntegrationTest {
         userRepository.deleteAll();
     }
     @Test
+    @WithMockUser
     void testCreateAccount_201() throws Exception {
         UserDto userDto = UserUtil.buildUserDto();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.asJsonString(userDto))
                         .accept(MediaType.APPLICATION_JSON))
@@ -53,11 +57,13 @@ class UserControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     void testCreateAccount_400() throws Exception {
         UserDto userDto = UserUtil.buildUserDto();
         userDto.setUsername(null);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.asJsonString(userDto))
                         .accept(MediaType.APPLICATION_JSON))
@@ -66,10 +72,12 @@ class UserControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     void testCreateAccount_415() throws Exception {
         UserDto userDto = UserUtil.buildUserDto();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_CBOR)
                         .content(JsonUtil.asJsonString(userDto))
                         .accept(MediaType.APPLICATION_JSON))
@@ -77,6 +85,7 @@ class UserControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     void testFindUserById_200() throws Exception {
         UserDto userDto = UserUtil.buildUserDto();
 
@@ -89,6 +98,7 @@ class UserControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     void testFindUserById_404() throws Exception {
         Long userId = 999L;
 
@@ -100,6 +110,7 @@ class UserControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     void testFindAllUser_200() throws Exception {
         UserDto userDto1 = UserUtil.buildUserDto();
         UserDto userDto2 = UserUtil.buildUserDto();
@@ -124,6 +135,7 @@ class UserControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     void testFindAllUser_200_withPageSizeIs1() throws Exception {
         UserDto userDto1 = UserUtil.buildUserDto();
         UserDto userDto2 = UserUtil.buildUserDto();
@@ -157,6 +169,7 @@ class UserControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     void testFindAllUser_whenMissingParams() throws Exception {
         UserDto userDto1 = UserUtil.buildUserDto();
         UserDto userDto2 = UserUtil.buildUserDto();
@@ -181,6 +194,7 @@ class UserControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     void testFindAllUser_whenEmptyUserList() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/users")
                 .accept(MediaType.APPLICATION_JSON))
