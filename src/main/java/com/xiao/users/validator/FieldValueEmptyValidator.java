@@ -1,14 +1,9 @@
 package com.xiao.users.validator;
-
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.bouncycastle.util.Strings;
 import org.springframework.beans.BeanWrapperImpl;
-
-
 import java.util.List;
 import java.util.Objects;
-
 public class FieldValueEmptyValidator implements ConstraintValidator<CheckAllValueEmpty, Object> {
     private List<String> fieldList;
     @Override
