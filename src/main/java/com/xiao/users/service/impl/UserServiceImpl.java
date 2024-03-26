@@ -44,17 +44,4 @@ public class UserServiceImpl implements IUserService {
         return usersPage.map(userMapper::userToUserDto);
     }
 
-    @Override
-    public UserDto updateUser(Long userId, UserDto userDto){
-        userDto.setId(userId);
-        userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("User", "id", String.valueOf(userId))
-        );
-
-        User userDataUpdate = userMapper.userDtoToUser(userDto);
-        return userMapper.userToUserDto(userRepository.save(userDataUpdate));
-    }
-
-
-
 }

@@ -14,6 +14,4 @@ public interface IUserService {
 
     Page<UserDto> findAllUser(int pages, int pageSize);
 
-    UserDto updateUser(Long userId, UserDto userDto);
-
 }
