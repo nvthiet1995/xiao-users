@@ -215,23 +215,6 @@ class UserControllerIntegrationTest {
     }
 
     @Test
-    void testUpdateUser_400() throws Exception {
-        User userSaved = userRepository.save(UserUtil.buildUser());
-        UserDto userUpdate = UserUtil.buildUserDto();
-        userUpdate.setUsername("");
-        userUpdate.setPassword("");
-        userUpdate.setEmailAddress("");
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.asJsonString(userUpdate))
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.title").value("VALIDATION ERROR"))
-                .andExpect(jsonPath("$.message").value("Enter at least 1 piece of information"));
-    }
-
-    @Test
     void testUpdateUser_415() throws Exception {
         User userSaved = userRepository.save(UserUtil.buildUser());
         UserDto userUpdate = UserUtil.buildUserDto();

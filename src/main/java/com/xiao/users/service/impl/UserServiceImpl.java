@@ -2,7 +2,6 @@ package com.xiao.users.service.impl;
 
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.entity.User;
-import com.xiao.users.exception.EmptyAllFieldsUpdateException;
 import com.xiao.users.exception.ResourceNotFoundException;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
@@ -51,10 +50,6 @@ public class UserServiceImpl implements IUserService {
         userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", String.valueOf(userId))
         );
-
-        if(userDto.getUsername().isEmpty() && userDto.getEmailAddress().isEmpty() && userDto.getPassword().isEmpty()){
-            throw new EmptyAllFieldsUpdateException();
-        }
 
         User userDataUpdate = userMapper.userDtoToUser(userDto);
         return userMapper.userToUserDto(userRepository.save(userDataUpdate));

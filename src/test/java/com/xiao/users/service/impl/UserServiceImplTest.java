@@ -2,7 +2,6 @@ package com.xiao.users.service.impl;
 
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.entity.User;
-import com.xiao.users.exception.EmptyAllFieldsUpdateException;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
 import com.xiao.users.util.UserUtil;
@@ -174,27 +173,6 @@ class UserServiceImplTest {
         }
     }
 
-    @Test
-    void testUpdateUser_whenEmptyAllField() {
-        Long userIdToUpdate = 2L;
-        User existingUser = UserUtil.buildUser();
-        existingUser.setId(userIdToUpdate);
-
-        UserDto userUpdate = UserUtil.buildUserDto();
-        userUpdate.setUsername("");
-        userUpdate.setPassword("");
-        userUpdate.setEmailAddress("");
-        userUpdate.setId(userIdToUpdate);
-        when(userRepository.findById(userIdToUpdate)).thenReturn(Optional.of(existingUser));
-
-
-        EmptyAllFieldsUpdateException exception = assertThrows(EmptyAllFieldsUpdateException.class, () -> {
-            userService.updateUser(userIdToUpdate, userUpdate);
-        });
-
-        assertEquals("Enter at least 1 piece of information", exception.getMessage());
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
-    }
 
     @Test
     void testUpdateUser_whenUserRepositoryGotException() {

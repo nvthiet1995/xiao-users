@@ -67,16 +67,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(EmptyAllFieldsUpdateException.class)
-    public ResponseEntity<ErrorResponseDto> handleEmptyAllFieldsUpdateException(EmptyAllFieldsUpdateException exception,
-                                                                            WebRequest webRequest) {
-        ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-                exception.getMessage(),
-                exception.getHttpStatus(),
-                "VALIDATION ERROR",
-                new HashMap<>(),
-                null
-        );
-        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
-    }
 }
