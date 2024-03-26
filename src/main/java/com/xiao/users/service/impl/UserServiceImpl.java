@@ -59,9 +59,9 @@ public class UserServiceImpl implements IUserService {
     private User mapValueFieldUpdate(User existingUser, UserUpdateDto userDto) {
         return User.builder()
                 .id(existingUser.getId())
-                .username(Objects.isNull(userDto.getUsername()) ? existingUser.getUsername() : userDto.getUsername())
-                .emailAddress(Objects.isNull(userDto.getEmailAddress()) ? existingUser.getEmailAddress() : userDto.getEmailAddress())
-                .password(Objects.isNull(userDto.getPassword()) ? existingUser.getPassword() : userDto.getPassword())
+                .username(Objects.isNull(userDto.getUsername()) || userDto.getUsername().isEmpty() ? existingUser.getUsername() : userDto.getUsername())
+                .emailAddress(Objects.isNull(userDto.getEmailAddress()) || userDto.getEmailAddress().isEmpty() ? existingUser.getEmailAddress() : userDto.getEmailAddress())
+                .password(Objects.isNull(userDto.getPassword()) || userDto.getPassword().isEmpty() ? existingUser.getPassword() : userDto.getPassword())
                 .build();
     }
 

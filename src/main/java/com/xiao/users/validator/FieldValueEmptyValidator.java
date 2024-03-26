@@ -1,12 +1,10 @@
 package com.xiao.users.validator;
 
-import com.xiao.users.exception.EmptyAllFieldsUpdateException;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.BeanWrapperImpl;
 
 
-import java.util.Arrays;
 import java.util.List;
 
 public class FieldValueEmptyValidator implements ConstraintValidator<CheckAllValueEmpty, Object> {
@@ -25,7 +23,7 @@ public class FieldValueEmptyValidator implements ConstraintValidator<CheckAllVal
                 return true;
             }
         }
-        throw new EmptyAllFieldsUpdateException();
+        return false;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.xiao.users.controller;
 
 import com.xiao.users.dto.UserDto;
+import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
@@ -212,9 +213,28 @@ class UserControllerIntegrationTest {
     }
 
     @Test
-    void testUpdateUser_400() throws Exception {
+    void testUpdateUser_201_whenEmptyTwoField() throws Exception {
         User userSaved = userRepository.save(UserUtil.buildUser());
-        UserDto userUpdate = UserUtil.buildUserDto();
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
+        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
+        userUpdate.setPassword(null);
+        userUpdate.setEmailAddress("");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.asJsonString(userUpdate))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userSaved.getId()))
+                .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
+                .andExpect(jsonPath("$.password").value(userSaved.getPassword()))
+                .andExpect(jsonPath("$.emailAddress").value(userSaved.getEmailAddress()));
+    }
+
+    @Test
+    void testUpdateUser_400_EmptyAllField() throws Exception {
+        User userSaved = userRepository.save(UserUtil.buildUser());
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
         userUpdate.setUsername("");
         userUpdate.setPassword("");
         userUpdate.setEmailAddress("");
@@ -224,13 +244,14 @@ class UserControllerIntegrationTest {
                 .content(JsonUtil.asJsonString(userUpdate))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errorMessage").value("Enter at least 1 piece of information"));
+                .andExpect(jsonPath("$.password").value("Password length must be greater then 8"))
+                .andExpect(jsonPath("$.userUpdateDto").value("Enter at least 1 piece of information"));
     }
 
     @Test
     void testUpdateUser_415() throws Exception {
         User userSaved = userRepository.save(UserUtil.buildUser());
-        UserDto userUpdate = UserUtil.buildUserDto();
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
         userUpdate.setUsername(userUpdate.getUsername()+"_updated");
         userUpdate.setPassword(userUpdate.getPassword()+"_updated");
         userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
@@ -246,7 +267,7 @@ class UserControllerIntegrationTest {
     @Test
     void testUpdateUser_whenNotFoundUserId() throws Exception {
         Long userId = 999L;
-        UserDto userUpdate = UserUtil.buildUserDto();
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
         userUpdate.setUsername(userUpdate.getUsername()+"_updated");
         userUpdate.setPassword(userUpdate.getPassword()+"_updated");
         userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");

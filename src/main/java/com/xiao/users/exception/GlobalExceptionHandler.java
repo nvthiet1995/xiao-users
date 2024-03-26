@@ -34,7 +34,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         List<ObjectError> validationErrorList = ex.getBindingResult().getAllErrors();
 
         validationErrorList.forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
+            String fieldName;
+            if(error instanceof FieldError){
+                fieldName = ((FieldError) error).getField();
+            }else{
+                fieldName = error.getObjectName();
+            }
             String validationMsg = error.getDefaultMessage();
             validationErrors.put(fieldName, validationMsg);
         });
@@ -63,24 +68,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponseDto> handleEmptyAllFieldsUpdateException(ConstraintViolationException constraintViolationException, WebRequest webRequest) {
-        Set<ConstraintViolation<?>> violations = constraintViolationException.getConstraintViolations();
-        ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
-            webRequest.getDescription(false),
-            HttpStatus.NOT_FOUND,
-            "",
-            LocalDateTime.now()
-        );
-        if (!violations.isEmpty()) {
-            StringBuilder builder = new StringBuilder();
-            violations.forEach(violation -> builder.append(" ").append(violation.getMessage()));
-            errorResponseDTO.setErrorMessage(builder.toString());
-        } else {
-            errorResponseDTO.setErrorMessage("ConstraintViolationException occurred");
-        }
-        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
 }
