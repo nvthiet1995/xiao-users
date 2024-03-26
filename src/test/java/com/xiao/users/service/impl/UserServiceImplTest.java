@@ -1,6 +1,7 @@
 package com.xiao.users.service.impl;
 
 import com.xiao.users.dto.UserDto;
+import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
@@ -123,6 +124,78 @@ class UserServiceImplTest {
         }
 
         verify(userRepository, times(1)).findAll(PageRequest.of(0,10));
+    }
+
+
+    @Test
+    void testUpdateUser() {
+        Long userIdToUpdate = 2L;
+        User existingUser = UserUtil.buildUser();
+        existingUser.setId(userIdToUpdate);
+
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
+        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
+        userUpdate.setPassword(userUpdate.getPassword()+"_updated");
+        userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
+        userUpdate.setId(userIdToUpdate);
+
+        when(userRepository.findById(userIdToUpdate)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenReturn(userMapper.userUpdateDtoToUser(userUpdate));
+
+        UserDto actualUser = userService.updateUser(userIdToUpdate, userUpdate);
+        assertEquals(actualUser.getId(), userUpdate.getId());
+        assertEquals(actualUser.getPassword(), userUpdate.getPassword());
+        assertEquals(actualUser.getUsername(), userUpdate.getUsername());
+        assertEquals(actualUser.getEmailAddress(), userUpdate.getEmailAddress());
+
+        verify(userRepository, times(1)).findById(userIdToUpdate);
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    void testUpdateUser_whenNotFound() {
+        Long userIdToUpdate = 2L;
+
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
+        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
+        userUpdate.setPassword(userUpdate.getPassword()+"_updated");
+        userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
+        userUpdate.setId(userIdToUpdate);
+
+        when(userRepository.findById(userIdToUpdate)).thenReturn(Optional.empty());
+
+        try {
+            UserDto userResult = userService.updateUser(userIdToUpdate, userUpdate);
+            fail("Should throw exception");
+        } catch (Exception ex) {
+            assertEquals(ex.getMessage(), String.format("%s not found with the given input data %s : '%s'", "User", "id", userIdToUpdate));
+        }
+    }
+
+    @Test
+    void testUpdateUser_whenUserRepositoryGotException() {
+        Long userIdToUpdate = 2L;
+        User existingUser = UserUtil.buildUser();
+        existingUser.setId(userIdToUpdate);
+
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
+        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
+        userUpdate.setPassword(userUpdate.getPassword()+"_updated");
+        userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
+        userUpdate.setId(userIdToUpdate);
+
+        when(userRepository.findById(userIdToUpdate)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenThrow(new RuntimeException("exception"));
+
+        try {
+            UserDto userResult = userService.updateUser(userIdToUpdate, userUpdate);
+            fail("Should throw exception");
+        } catch (RuntimeException ex) {
+            assertEquals(ex.getMessage(), "exception");
+        }
+
+        verify(userRepository, times(1)).findById(userIdToUpdate);
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
 }

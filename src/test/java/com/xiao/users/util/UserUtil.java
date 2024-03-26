@@ -1,9 +1,18 @@
 package com.xiao.users.util;
 
 import com.xiao.users.dto.UserDto;
+import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
 
 public class UserUtil {
+
+    public static UserUpdateDto buildUserUpdateDto() {
+        return UserUpdateDto.builder()
+                .username("abc_update")
+                .emailAddress("abc_update@gmail.com")
+                .password("passwordUpdate")
+                .build();
+    }
 
     public static UserDto buildUserDto() {
         return UserDto.builder()
@@ -20,4 +29,5 @@ public class UserUtil {
                 .password("abcPassword")
                 .build();
     }
+
 }

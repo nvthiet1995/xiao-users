@@ -3,6 +3,7 @@ package com.xiao.users.controller;
 import com.xiao.users.constants.UserConstants;
 import com.xiao.users.dto.ResponseDto;
 import com.xiao.users.dto.UserDto;
+import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.service.IUserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -54,4 +54,12 @@ public class UserController {
                 .body(userDtos);
     }
 
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto){
+        UserDto userResponse = iUserService.updateUser(id, userUpdateDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userResponse);
+    }
 }
