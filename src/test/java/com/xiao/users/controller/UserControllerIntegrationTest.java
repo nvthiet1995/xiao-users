@@ -1,6 +1,7 @@
 package com.xiao.users.controller;
 
 import com.xiao.users.dto.UserDto;
+import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
@@ -190,5 +191,82 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.pageable.pageNumber", is(0)))
                 .andExpect(jsonPath("$.pageable.pageSize", is(10)));
 
+    }
+
+    @Test
+    void testUpdateUser_201() throws Exception {
+        User userSaved = userRepository.save(UserUtil.buildUser());
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.asJsonString(userUpdate))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userSaved.getId()))
+                .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
+                .andExpect(jsonPath("$.password").value(userUpdate.getPassword()))
+                .andExpect(jsonPath("$.emailAddress").value(userUpdate.getEmailAddress()));
+    }
+
+    @Test
+    void testUpdateUser_201_whenEmptyTwoField() throws Exception {
+        User userSaved = userRepository.save(UserUtil.buildUser());
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
+        userUpdate.setPassword(null);
+        userUpdate.setEmailAddress(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.asJsonString(userUpdate))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userSaved.getId()))
+                .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
+                .andExpect(jsonPath("$.password").value(userSaved.getPassword()))
+                .andExpect(jsonPath("$.emailAddress").value(userSaved.getEmailAddress()));
+    }
+
+    @Test
+    void testUpdateUser_400_EmptyAllField() throws Exception {
+        User userSaved = userRepository.save(UserUtil.buildUser());
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
+        userUpdate.setUsername(null);
+        userUpdate.setPassword(null);
+        userUpdate.setEmailAddress(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.asJsonString(userUpdate))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.userUpdateDto").value("Please enter at least one piece when updating the user"));
+    }
+
+    @Test
+    void testUpdateUser_415() throws Exception {
+        User userSaved = userRepository.save(UserUtil.buildUser());
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
+        userUpdate.setEmailAddress("test@gmail.com");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
+                .contentType(MediaType.APPLICATION_CBOR)
+                .content(JsonUtil.asJsonString(userUpdate))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(415));
+    }
+
+    @Test
+    void testUpdateUser_whenNotFoundUserId() throws Exception {
+        Long userId = 999L;
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.asJsonString(userUpdate))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorCode").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.errorMessage").value(String.format("User not found with the given input data id : '%s'", userId)));
     }
 }

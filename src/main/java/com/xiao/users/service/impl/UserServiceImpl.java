@@ -1,23 +1,21 @@
 package com.xiao.users.service.impl;
 
 import com.xiao.users.dto.UserDto;
+import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
 import com.xiao.users.exception.ResourceNotFoundException;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
 import com.xiao.users.service.IUserService;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 
 @Service
 public class UserServiceImpl implements IUserService {
-
     private final UserRepository userRepository;
 
     private final UserMapper userMapper;
@@ -46,6 +44,25 @@ public class UserServiceImpl implements IUserService {
     public Page<UserDto> findAllUser(int pages, int pageSize) {
         Page<User> usersPage = userRepository.findAll(PageRequest.of(pages, pageSize));
         return usersPage.map(userMapper::userToUserDto);
+    }
+
+    @Override
+    public UserDto updateUser(Long userId, UserUpdateDto userDto){
+        User existingUser = userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", String.valueOf(userId))
+        );
+
+        existingUser = mapValueFieldUpdate(existingUser, userDto);
+        return userMapper.userToUserDto(userRepository.save(existingUser));
+    }
+
+    private User mapValueFieldUpdate(User existingUser, UserUpdateDto userDto) {
+        return User.builder()
+                .id(existingUser.getId())
+                .username(Objects.isNull(userDto.getUsername()) || userDto.getUsername().isEmpty() ? existingUser.getUsername() : userDto.getUsername())
+                .emailAddress(Objects.isNull(userDto.getEmailAddress()) || userDto.getEmailAddress().isEmpty() ? existingUser.getEmailAddress() : userDto.getEmailAddress())
+                .password(Objects.isNull(userDto.getPassword()) || userDto.getPassword().isEmpty() ? existingUser.getPassword() : userDto.getPassword())
+                .build();
     }
 
 }
