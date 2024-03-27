@@ -2,9 +2,7 @@ package com.xiao.users.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.hibernate.mapping.Any;
 import org.springframework.http.HttpStatus;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -19,6 +17,6 @@ public class ErrorResponseDto {
 
     private Map<String, String> errors;
 
-    private List<Any> data;
+    private Object data;
 
 }
