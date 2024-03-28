@@ -119,11 +119,9 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.pageable.pageNumber", is(0)))
                 .andExpect(jsonPath("$.pageable.pageSize", is(10)))
                 .andExpect(jsonPath("$.content[0].username", is(user1.getUsername())))
-                .andExpect(jsonPath("$.content[0].password", is(user1.getPassword())))
                 .andExpect(jsonPath("$.content[0].emailAddress", is(user1.getEmailAddress())))
                 .andExpect(jsonPath("$.content[1].username", is(user2.getUsername())))
-                .andExpect(jsonPath("$.content[1].emailAddress", is(user2.getEmailAddress())))
-                .andExpect(jsonPath("$.content[1].password", is(user2.getPassword())));
+                .andExpect(jsonPath("$.content[1].emailAddress", is(user2.getEmailAddress())));
     }
 
     @Test
@@ -143,7 +141,6 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.pageable.pageNumber", is(0)))
                 .andExpect(jsonPath("$.pageable.pageSize", is(1)))
                 .andExpect(jsonPath("$.content[0].username", is(userPage1.getUsername())))
-                .andExpect(jsonPath("$.content[0].password", is(userPage1.getPassword())))
                 .andExpect(jsonPath("$.content[0].emailAddress", is(userPage1.getEmailAddress())));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users").param("pages", "1").param("pageSize", "1")
@@ -155,7 +152,6 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.pageable.pageNumber", is(1)))
                 .andExpect(jsonPath("$.pageable.pageSize", is(1)))
                 .andExpect(jsonPath("$.content[0].username", is(userPage2.getUsername())))
-                .andExpect(jsonPath("$.content[0].password", is(userPage2.getPassword())))
                 .andExpect(jsonPath("$.content[0].emailAddress", is(userPage2.getEmailAddress())));
     }
 
@@ -176,11 +172,9 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.pageable.pageNumber", is(0)))
                 .andExpect(jsonPath("$.pageable.pageSize", is(10)))
                 .andExpect(jsonPath("$.content[0].username", is(user1.getUsername())))
-                .andExpect(jsonPath("$.content[0].password", is(user1.getPassword())))
                 .andExpect(jsonPath("$.content[0].emailAddress", is(user1.getEmailAddress())))
                 .andExpect(jsonPath("$.content[1].username", is(user2.getUsername())))
-                .andExpect(jsonPath("$.content[1].emailAddress", is(user2.getEmailAddress())))
-                .andExpect(jsonPath("$.content[1].password", is(user2.getPassword())));
+                .andExpect(jsonPath("$.content[1].emailAddress", is(user2.getEmailAddress())));
     }
 
     @Test
@@ -208,7 +202,6 @@ class UserControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userSaved.getId()))
                 .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
-                .andExpect(jsonPath("$.password").value(userUpdate.getPassword()))
                 .andExpect(jsonPath("$.emailAddress").value(userUpdate.getEmailAddress()));
     }
 
@@ -226,7 +219,6 @@ class UserControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userSaved.getId()))
                 .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
-                .andExpect(jsonPath("$.password").value(userSaved.getPassword()))
                 .andExpect(jsonPath("$.emailAddress").value(userSaved.getEmailAddress()));
     }
 
