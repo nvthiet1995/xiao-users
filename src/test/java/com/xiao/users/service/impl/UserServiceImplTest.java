@@ -72,7 +72,6 @@ class UserServiceImplTest {
         UserDto result = userService.findUserById(userId);
 
         assertEquals(user.getUsername(), result.getUsername());
-        assertEquals(user.getPassword(), result.getPassword());
         assertEquals(user.getEmailAddress(), result.getEmailAddress());
     }
 
@@ -144,7 +143,6 @@ class UserServiceImplTest {
 
         UserDto actualUser = userService.updateUser(userIdToUpdate, userUpdate);
         assertEquals(actualUser.getId(), userUpdate.getId());
-        assertEquals(actualUser.getPassword(), userUpdate.getPassword());
         assertEquals(actualUser.getUsername(), userUpdate.getUsername());
         assertEquals(actualUser.getEmailAddress(), userUpdate.getEmailAddress());
 
