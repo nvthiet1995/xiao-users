@@ -56,6 +56,14 @@ public class UserServiceImpl implements IUserService {
         return userMapper.userToUserDto(userRepository.save(existingUser));
     }
 
+    @Override
+    public void deleteUser(Long id){
+        userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", String.valueOf(id))
+        );
+        userRepository.deleteById(id);
+    }
+
     private User mapValueFieldUpdate(User existingUser, UserUpdateDto userDto) {
         return User.builder()
                 .id(existingUser.getId())

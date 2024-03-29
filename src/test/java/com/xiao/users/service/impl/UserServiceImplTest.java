@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Fail.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
@@ -196,4 +197,46 @@ class UserServiceImplTest {
         verify(userRepository, times(1)).save(any(User.class));
     }
 
+    @Test
+    void testDeleteUser_204(){
+        Long userId = 1L;
+        User user = UserUtil.buildUser();
+        user.setId(userId);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        userRepository.deleteById(userId);
+
+        verify(userRepository, times(1)).deleteById(userId);
+    }
+
+    @Test
+    void testDeleteUser_whenNotFound() {
+        Long userId = 2L;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        try {
+            userService.deleteUser(userId);
+            fail("Should throw exception");
+        } catch (Exception ex) {
+            assertEquals(ex.getMessage(), String.format("%s not found with the given input data %s : '%s'", "User", "id", userId));
+        }
+    }
+
+    @Test
+    void testDeleteUser_whenUserRepositoryGotException() {
+        Long userId = 2L;
+
+        User user = UserUtil.buildUser();
+        user.setId(userId);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        doThrow(RuntimeException.class).when(userRepository).deleteById(userId);
+
+        try {
+            userService.deleteUser(userId);
+            fail("Should throw exception");
+        } catch (RuntimeException ex) {
+            assertThrows(RuntimeException.class, () -> userService.deleteUser(userId));
+        }
+    }
 }
