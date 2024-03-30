@@ -60,4 +60,10 @@ public class UserController {
                 .status(HttpStatus.OK)
                 .body(userResponse);
     }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
+        iUserService.deleteUser(id);
+        return ResponseEntity.ok().build();
+    }
 }

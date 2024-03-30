@@ -265,4 +265,27 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.code").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value(String.format("User not found with the given input data id : '%s'", userId)));
     }
+
+    @Test
+    void testDeleteUser_200() throws Exception {
+        User userSaved = userRepository.save(UserUtil.buildUser());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/{id}", userSaved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    @Test
+    void testDeleteUser_whenNotFoundUserId() throws Exception {
+        Long userId = 69L;
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Resource Not Found Error"))
+                .andExpect(jsonPath("$.code").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.message").value(String.format("User not found with the given input data id : '%s'", userId)));
+    }
+
 }
