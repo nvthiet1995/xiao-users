@@ -267,13 +267,13 @@ class UserControllerIntegrationTest {
     }
 
     @Test
-    void testDeleteUser_204() throws Exception {
+    void testDeleteUser_200() throws Exception {
         User userSaved = userRepository.save(UserUtil.buildUser());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/users/{id}", userSaved.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
     @Test
     void testDeleteUser_whenNotFoundUserId() throws Exception {
