@@ -3,7 +3,8 @@ package com.xiao.users.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.UUID;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -28,4 +29,11 @@ public class User extends BaseEntity {
     @Column(name = "email_address")
     private String emailAddress;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 }
