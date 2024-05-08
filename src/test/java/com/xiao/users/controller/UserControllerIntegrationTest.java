@@ -1,11 +1,13 @@
 package com.xiao.users.controller;
 
+import com.xiao.users.dto.RoleDto;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
 import com.xiao.users.util.JsonUtil;
+import com.xiao.users.util.RoleUtil;
 import com.xiao.users.util.UserUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -42,6 +47,21 @@ class UserControllerIntegrationTest {
     @Test
     void testCreateAccount_201() throws Exception {
         UserDto userDto = UserUtil.buildUserDto();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.asJsonString(userDto))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.statusCode").value("201"))
+                .andExpect(jsonPath("$.statusMsg").value("User created successfully"));
+    }
+
+    void testCreateAccount_201_whenSetRoles() throws Exception {
+        UserDto userDto = UserUtil.buildUserDto();
+        Set<RoleDto> roleDtoSet = new HashSet<>();
+        roleDtoSet.add(RoleUtil.buildRoleDto());
+        userDto.setRoles(roleDtoSet);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)

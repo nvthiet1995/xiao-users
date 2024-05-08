@@ -26,5 +26,5 @@ public class UserDto {
     @Email(message = "Email is not valid")
     private String emailAddress;
 
-    private Set<Role> roles;
+    private Set<RoleDto> roles;
 }
