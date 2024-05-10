@@ -3,8 +3,11 @@ package com.xiao.users.controller;
 import com.xiao.users.dto.RoleDto;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
+import com.xiao.users.entity.Role;
 import com.xiao.users.entity.User;
+import com.xiao.users.mapper.RoleMapper;
 import com.xiao.users.mapper.UserMapper;
+import com.xiao.users.repository.RoleRepository;
 import com.xiao.users.repository.UserRepository;
 import com.xiao.users.util.JsonUtil;
 import com.xiao.users.util.RoleUtil;
@@ -40,6 +43,12 @@ class UserControllerIntegrationTest {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private RoleMapper roleMapper;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
     @AfterEach
     public void tearDown(){
         userRepository.deleteAll();
@@ -57,6 +66,7 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.statusMsg").value("User created successfully"));
     }
 
+    @Test
     void testCreateAccount_201_whenSetRoles() throws Exception {
         UserDto userDto = UserUtil.buildUserDto();
         Set<RoleDto> roleDtoSet = new HashSet<>();
@@ -223,6 +233,30 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.id").value(userSaved.getId()))
                 .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
                 .andExpect(jsonPath("$.emailAddress").value(userUpdate.getEmailAddress()));
+    }
+
+    @Test
+    void testUpdateUser_201_whenSetRoles() throws Exception {
+        User userSaved = userRepository.save(UserUtil.buildUser());
+        Role adminRole = RoleUtil.buildRole();
+        roleRepository.save(adminRole);
+        Set<RoleDto> roleSetDto = new HashSet<>();
+        roleSetDto.add(roleMapper.roleToRoleDto(adminRole));
+
+        UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
+        userUpdate.setRoles(roleSetDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userSaved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.asJsonString(userUpdate))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userSaved.getId()))
+                .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
+                .andExpect(jsonPath("$.emailAddress").value(userUpdate.getEmailAddress()))
+                .andExpect(jsonPath("$.roles[0].id").value(adminRole.getId()))
+                .andExpect(jsonPath("$.roles[0].name").value(adminRole.getName()))
+                .andExpect(jsonPath("$.roles[0].slug").value(adminRole.getSlug()));
     }
 
     @Test
