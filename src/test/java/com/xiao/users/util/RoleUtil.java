@@ -7,7 +7,6 @@ public class RoleUtil {
     public static RoleDto buildRoleDto() {
         return RoleDto.builder()
                 .id(1L)
-                .slug("super-admin")
                 .name("Super Admin")
                 .description("All permission")
                 .build();
@@ -16,7 +15,6 @@ public class RoleUtil {
     public static Role buildRole() {
         return Role.builder()
                 .id(1L)
-                .slug("super-admin")
                 .name("Super Admin")
                 .description("All permission")
                 .build();
