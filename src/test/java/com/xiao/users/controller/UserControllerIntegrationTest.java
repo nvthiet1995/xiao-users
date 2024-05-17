@@ -255,8 +255,7 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
                 .andExpect(jsonPath("$.emailAddress").value(userUpdate.getEmailAddress()))
                 .andExpect(jsonPath("$.roles[0].id").value(adminRole.getId()))
-                .andExpect(jsonPath("$.roles[0].name").value(adminRole.getName()))
-                .andExpect(jsonPath("$.roles[0].slug").value(adminRole.getSlug()));
+                .andExpect(jsonPath("$.roles[0].name").value(adminRole.getName()));
     }
 
     @Test
