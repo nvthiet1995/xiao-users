@@ -1,9 +1,7 @@
 package com.xiao.users.service.impl;
 
-import com.xiao.users.dto.RoleDto;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
-import com.xiao.users.entity.Role;
 import com.xiao.users.entity.User;
 import com.xiao.users.exception.ResourceNotFoundException;
 import com.xiao.users.mapper.RoleMapper;
@@ -14,9 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 
 @Service
@@ -78,7 +74,7 @@ public class UserServiceImpl implements IUserService {
                 .username(Objects.isNull(userDto.getUsername()) || userDto.getUsername().isEmpty() ? existingUser.getUsername() : userDto.getUsername())
                 .emailAddress(Objects.isNull(userDto.getEmailAddress()) || userDto.getEmailAddress().isEmpty() ? existingUser.getEmailAddress() : userDto.getEmailAddress())
                 .password(Objects.isNull(userDto.getPassword()) || userDto.getPassword().isEmpty() ? existingUser.getPassword() : userDto.getPassword())
-                .roles(roleMapper.roleDtoSetToRoleSet(userDto.getRoles()))
+                .roles(roleMapper.roleDtosToRoles(userDto.getRoles()))
                 .build();
     }
 

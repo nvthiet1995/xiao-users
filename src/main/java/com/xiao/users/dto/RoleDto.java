@@ -1,24 +1,21 @@
 package com.xiao.users.dto;
 
-import com.xiao.users.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name = "roles")
 @Getter
 @Setter
 @Builder
-public class RoleDto extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class RoleDto{
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 100)
+    @NotEmpty(message = "Missing role name")
+    @Size(min = 2, message = "Role name length must be greater then 2")
     private String name;
 
-    @Column(name = "description", length = 300)
     private String description;
 }
