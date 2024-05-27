@@ -12,7 +12,7 @@ import com.xiao.users.repository.UserRepository;
 import com.xiao.users.util.JsonUtil;
 import com.xiao.users.util.RoleUtil;
 import com.xiao.users.util.UserUtil;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ class UserControllerIntegrationTest {
     @Autowired
     private RoleRepository roleRepository;
 
-    @AfterEach
+    @BeforeEach
     public void tearDown(){
         userRepository.deleteAll();
         roleRepository.deleteAll();
@@ -157,11 +157,9 @@ class UserControllerIntegrationTest {
 
     @Test
     void testFindAllUser_200_withPageSizeIs1() throws Exception {
-        UserDto userDto1 = UserUtil.buildUserDto();
-        UserDto userDto2 = UserUtil.buildUserDto();
 
-        User userPage1 = userRepository.save(userMapper.userDtoToUser(userDto1));
-        User userPage2 = userRepository.save(userMapper.userDtoToUser(userDto2));
+        User userPage1 = userRepository.save(UserUtil.buildUser());
+        User userPage2 = userRepository.save(UserUtil.buildUser());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users").param("pages", "0").param("pageSize", "1")
                         .accept(MediaType.APPLICATION_JSON))
