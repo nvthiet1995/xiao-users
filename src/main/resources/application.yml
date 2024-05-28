@@ -15,6 +15,8 @@ spring:
         url: "jdbc:mysql://localhost:3306/user_db"
         username: "root"
 
+    security:
+        oauth2.resourceserver.jwt.issuer-uri: "http://localhost:9000"
 
 eureka:
     instance:

@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.Set;
+
 @Data
 @Builder
 public class UserDto {
@@ -20,4 +23,6 @@ public class UserDto {
 
     @Email(message = "Email is not valid")
     private String emailAddress;
+
+    private Set<RoleDto> roles;
 }

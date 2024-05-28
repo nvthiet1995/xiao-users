@@ -3,6 +3,7 @@ package com.xiao.users.service.impl;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
+import com.xiao.users.mapper.RoleMapper;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
 import com.xiao.users.util.UserUtil;
@@ -32,10 +33,12 @@ class UserServiceImplTest {
 
     private UserServiceImpl userService;
 
+    private final RoleMapper roleMapper = Mappers.getMapper(RoleMapper.class);
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        userService = new UserServiceImpl(userRepository, userMapper);
+        userService = new UserServiceImpl(userRepository, userMapper, roleMapper);
     }
 
     @Test
