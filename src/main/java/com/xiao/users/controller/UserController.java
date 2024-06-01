@@ -6,6 +6,7 @@ import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,10 +38,6 @@ public class UserController {
             description = "Create an account with a role to use in the XIAO system",
             tags = {"user", "post"}
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", content = { @Content(schema = @Schema()) }),
-            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema()) }),
-            @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @PostMapping
     public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody UserDto userDto) {
         iUserService.createUser(userDto);
@@ -55,12 +52,10 @@ public class UserController {
             description = "Get a user by Id",
             tags = {"user", "get"}
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = UserDto.class), mediaType = "application/json") }),
-            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema()) }),
-            @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDto> findUserById(@PathVariable("id") Long userId) {
+    public ResponseEntity<UserDto> findUserById(
+            @Parameter(description = "ID of the item to be obtained", required = true)
+            @PathVariable("id") Long userId) {
         UserDto userDto = iUserService.findUserById(userId);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -72,13 +67,11 @@ public class UserController {
             description = "Get a user by Id",
             tags = {"user", "get"}
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = UserDto.class), mediaType = "application/json") }),
-            @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema()) }),
-            @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) }) })
     @GetMapping
     public ResponseEntity<Page<UserDto>> findAllUser(
+            @Parameter(description = "The page requires redirection.")
             @RequestParam(defaultValue = "0") int pages,
+            @Parameter(description = "The number of elements on the page.")
             @RequestParam(defaultValue = "10") int pageSize
     ) {
         Page<UserDto> userDtos = iUserService.findAllUser(pages, pageSize);
@@ -87,16 +80,30 @@ public class UserController {
                 .body(userDtos);
     }
 
+    @Operation(
+            summary = "Edit a user",
+            description = "Edit a user by Id",
+            tags = {"user", "put"}
+    )
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto){
+    public ResponseEntity<UserDto> updateUser(
+            @Parameter(description = "ID of the item to be obtained", required = true)
+            @PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto){
         UserDto userResponse = iUserService.updateUser(id, userUpdateDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userResponse);
     }
 
+    @Operation(
+            summary = "Delete a user",
+            description = "Delete a user by Id",
+            tags = {"user", "delete"}
+    )
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
+    public ResponseEntity<Void> deleteUser(
+            @Parameter(description = "ID of the item to be obtained", required = true)
+            @PathVariable Long id){
         iUserService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
