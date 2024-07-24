@@ -1,5 +1,6 @@
 package com.xiao.users.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xiao.users.constants.UserConstants;
 import com.xiao.users.dto.ResponseDto;
 import com.xiao.users.dto.UserDto;
@@ -26,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody UserDto userDto) throws JsonProcessingException {
         iUserService.createUser(userDto);
         logger.info("Create user successfully!");
         return ResponseEntity
@@ -54,7 +55,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto){
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto) throws JsonProcessingException {
         UserDto userResponse = iUserService.updateUser(id, userUpdateDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -62,7 +63,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) throws JsonProcessingException {
         iUserService.deleteUser(id);
         return ResponseEntity.ok().build();
     }

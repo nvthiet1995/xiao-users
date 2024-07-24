@@ -1,5 +1,9 @@
 package com.xiao.users.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xiao.users.config.AppConfig;
+import com.xiao.users.constants.UserConstants;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
@@ -10,6 +14,7 @@ import com.xiao.users.repository.UserRepository;
 import com.xiao.users.service.IUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -23,17 +28,36 @@ public class UserServiceImpl implements IUserService {
 
     private final RoleMapper roleMapper;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleMapper roleMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.roleMapper = roleMapper;
-    }
+    private final AppConfig appConfig;
 
-    @Override
-    public void createUser(UserDto userDto) {
-        User user = userMapper.userDtoToUser(userDto);
-        userRepository.save(user);
-    }
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    private final ObjectMapper objectMapper;
+
+  public UserServiceImpl(
+      UserRepository userRepository,
+      UserMapper userMapper,
+      RoleMapper roleMapper,
+      AppConfig appConfig,
+      KafkaTemplate<String, String> kafkaTemplate,
+      ObjectMapper objectMapper) {
+    this.userRepository = userRepository;
+    this.userMapper = userMapper;
+    this.roleMapper = roleMapper;
+    this.appConfig = appConfig;
+    this.kafkaTemplate = kafkaTemplate;
+    this.objectMapper = objectMapper;
+  }
+
+  @Override
+  public void createUser(UserDto userDto) throws JsonProcessingException {
+    User user = userMapper.userDtoToUser(userDto);
+    User createdUser = userRepository.save(user);
+    kafkaTemplate.send(
+        appConfig.getUserSyncTopic(),
+        UserConstants.ActionType.CREATE,
+        objectMapper.writeValueAsString(userMapper.userToUserSyncDto(createdUser)));
+  }
 
     @Override
     public UserDto findUserById(Long id) {
@@ -51,21 +75,30 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserDto updateUser(Long userId, UserUpdateDto userDto){
+    public UserDto updateUser(Long userId, UserUpdateDto userDto) throws JsonProcessingException {
         User existingUser = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", String.valueOf(userId))
         );
 
         existingUser = mapValueFieldUpdate(existingUser, userDto);
-        return userMapper.userToUserDto(userRepository.save(existingUser));
+        User updatedUser = userRepository.save(existingUser);
+        kafkaTemplate.send(
+                appConfig.getUserSyncTopic(),
+                UserConstants.ActionType.UPDATE,
+                objectMapper.writeValueAsString(userMapper.userToUserSyncDto(updatedUser)));
+        return userMapper.userToUserDto(updatedUser);
     }
 
     @Override
-    public void deleteUser(Long id){
-        userRepository.findById(id).orElseThrow(
+    public void deleteUser(Long id) throws JsonProcessingException {
+        User deleteUser = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", String.valueOf(id))
         );
         userRepository.deleteById(id);
+        kafkaTemplate.send(
+                appConfig.getUserSyncTopic(),
+                UserConstants.ActionType.DELETE,
+                objectMapper.writeValueAsString(userMapper.userToUserSyncDto(deleteUser)));
     }
 
     private User mapValueFieldUpdate(User existingUser, UserUpdateDto userDto) {

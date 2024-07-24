@@ -1,5 +1,7 @@
 package com.xiao.users.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.xiao.users.config.AppConfig;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
@@ -38,11 +40,11 @@ class UserServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        userService = new UserServiceImpl(userRepository, userMapper, roleMapper);
+        userService = new UserServiceImpl(userRepository, userMapper, roleMapper, null,null, null);
     }
 
     @Test
-    void testCreateUser() {
+    void testCreateUser() throws JsonProcessingException {
         UserDto userDto = UserUtil.buildUserDto();
 
         userService.createUser(userDto);
@@ -58,7 +60,7 @@ class UserServiceImplTest {
         try {
             userService.createUser(userDto);
             fail("Should throw exception");
-        } catch (RuntimeException ex) {
+        } catch (RuntimeException | JsonProcessingException ex) {
             assertEquals(ex.getMessage(), "exception");
         }
 
@@ -130,7 +132,7 @@ class UserServiceImplTest {
 
 
     @Test
-    void testUpdateUser() {
+    void testUpdateUser() throws JsonProcessingException {
         Long userIdToUpdate = 2L;
         User existingUser = UserUtil.buildUser();
         existingUser.setId(userIdToUpdate);
@@ -193,6 +195,8 @@ class UserServiceImplTest {
             fail("Should throw exception");
         } catch (RuntimeException ex) {
             assertEquals(ex.getMessage(), "exception");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
 
         verify(userRepository, times(1)).findById(userIdToUpdate);
@@ -239,6 +243,8 @@ class UserServiceImplTest {
             fail("Should throw exception");
         } catch (RuntimeException ex) {
             assertThrows(RuntimeException.class, () -> userService.deleteUser(userId));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }

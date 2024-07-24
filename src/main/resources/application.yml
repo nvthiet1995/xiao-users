@@ -18,6 +18,8 @@ spring:
     security:
         oauth2.resourceserver.jwt.issuer-uri: "http://localhost:9000"
 
+    kafka:
+        bootstrap-servers: "localhost:9092"
 eureka:
     instance:
         preferIpAddress: true     # by default will use hostname, but we don't have DNS mapping so use Ip address
@@ -29,8 +31,9 @@ eureka:
 
 info:
     app:
-        name: "accounts"
-        description: "Accounts application"
+        name: "xiao-users"
+        description: "Users service in Xiao system"
         version: "1.0.0"
 
-
+kafka-topic:
+    user-sync: "env.user-sync"
