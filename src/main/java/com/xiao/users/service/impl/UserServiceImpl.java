@@ -2,7 +2,7 @@ package com.xiao.users.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xiao.users.config.AppConfig;
+import com.xiao.users.kafka.KafkaConfigProperties;
 import com.xiao.users.constants.UserConstants;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
@@ -28,7 +28,7 @@ public class UserServiceImpl implements IUserService {
 
     private final RoleMapper roleMapper;
 
-    private final AppConfig appConfig;
+    private final KafkaConfigProperties appConfig;
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
@@ -38,7 +38,7 @@ public class UserServiceImpl implements IUserService {
       UserRepository userRepository,
       UserMapper userMapper,
       RoleMapper roleMapper,
-      AppConfig appConfig,
+      KafkaConfigProperties appConfig,
       KafkaTemplate<String, String> kafkaTemplate,
       ObjectMapper objectMapper) {
     this.userRepository = userRepository;

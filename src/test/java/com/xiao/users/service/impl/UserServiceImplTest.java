@@ -1,7 +1,6 @@
 package com.xiao.users.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.xiao.users.config.AppConfig;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;

@@ -1,6 +1,5 @@
 package com.xiao.users.kafka;
 
-import com.xiao.users.config.AppConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -15,16 +14,16 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
-    private AppConfig appConfig;
+    private KafkaConfigProperties kafkaConfigProperties;
 
-    public KafkaProducerConfig(AppConfig appConfig) {
-        this.appConfig = appConfig;
+    public KafkaProducerConfig(KafkaConfigProperties kafkaConfigProperties) {
+        this.kafkaConfigProperties = kafkaConfigProperties;
     }
 
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, appConfig.getBootstrapAddress());
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfigProperties.getBootstrapAddress());
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 

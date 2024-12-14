@@ -1,6 +1,5 @@
 package com.xiao.users.kafka;
 
-import com.xiao.users.config.AppConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.serialization.Serdes;
 import org.springframework.context.annotation.Bean;
@@ -20,17 +19,17 @@ import static org.apache.kafka.streams.StreamsConfig.*;
 @EnableKafkaStreams
 public class KafkaStreamsConfig {
 
-    private AppConfig appConfig;
+    private KafkaConfigProperties kafkaConfigProperties;
 
-    public KafkaStreamsConfig(AppConfig appConfig) {
-        this.appConfig = appConfig;
+    public KafkaStreamsConfig(KafkaConfigProperties kafkaConfigProperties) {
+        this.kafkaConfigProperties = kafkaConfigProperties;
     }
 
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
     KafkaStreamsConfiguration kStreamsConfigs() {
         return new KafkaStreamsConfiguration(Map.of(
-                APPLICATION_ID_CONFIG, appConfig.getAppId(),
-                BOOTSTRAP_SERVERS_CONFIG, appConfig.getBootstrapAddress(),
+                APPLICATION_ID_CONFIG, kafkaConfigProperties.getAppId(),
+                BOOTSTRAP_SERVERS_CONFIG, kafkaConfigProperties.getBootstrapAddress(),
                 DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName(),
                 DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName()
         ));
@@ -38,7 +37,7 @@ public class KafkaStreamsConfig {
 
     @Bean
     NewTopic userSyncTopic() {
-        return TopicBuilder.name(appConfig.getUserSyncTopic())
+        return TopicBuilder.name(kafkaConfigProperties.getUserSyncTopic())
                 .partitions(1)
                 .replicas(1)
                 .build();
