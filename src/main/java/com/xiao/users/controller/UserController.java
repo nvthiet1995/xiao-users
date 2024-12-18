@@ -5,7 +5,7 @@ import com.xiao.users.constants.UserConstants;
 import com.xiao.users.dto.ResponseDto;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
-import com.xiao.users.service.IUserService;
+import com.xiao.users.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,17 +18,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
-    private final IUserService iUserService;
+    private final UserService userService;
 
     private Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    public UserController(IUserService iUserService) {
-        this.iUserService = iUserService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping
     public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody UserDto userDto) throws JsonProcessingException {
-        iUserService.createUser(userDto);
+        userService.createUser(userDto);
         logger.info("Create user successfully!");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -37,7 +37,7 @@ public class UserController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<UserDto> findUserById(@PathVariable("id") Long userId) {
-        UserDto userDto = iUserService.findUserById(userId);
+        UserDto userDto = userService.findUserById(userId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userDto);
@@ -48,7 +48,7 @@ public class UserController {
             @RequestParam(defaultValue = "0") int pages,
             @RequestParam(defaultValue = "10") int pageSize
     ) {
-        Page<UserDto> userDtos = iUserService.findAllUser(pages, pageSize);
+        Page<UserDto> userDtos = userService.findAllUser(pages, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userDtos);
@@ -56,7 +56,7 @@ public class UserController {
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto) throws JsonProcessingException {
-        UserDto userResponse = iUserService.updateUser(id, userUpdateDto);
+        UserDto userResponse = userService.updateUser(id, userUpdateDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userResponse);
@@ -64,7 +64,7 @@ public class UserController {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) throws JsonProcessingException {
-        iUserService.deleteUser(id);
+        userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
 }

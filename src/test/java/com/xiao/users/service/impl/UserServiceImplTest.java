@@ -7,6 +7,7 @@ import com.xiao.users.entity.User;
 import com.xiao.users.mapper.RoleMapper;
 import com.xiao.users.mapper.UserMapper;
 import com.xiao.users.repository.UserRepository;
+import com.xiao.users.service.UserSyncService;
 import com.xiao.users.util.UserUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,10 +37,12 @@ class UserServiceImplTest {
 
     private final RoleMapper roleMapper = Mappers.getMapper(RoleMapper.class);
 
+    private UserSyncService userSyncService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        userService = new UserServiceImpl(userRepository, userMapper, roleMapper, null,null, null);
+        userService = new UserServiceImpl(userRepository, userMapper, roleMapper, userSyncService);
     }
 
     @Test
