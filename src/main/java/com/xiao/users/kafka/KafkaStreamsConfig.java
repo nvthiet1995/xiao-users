@@ -19,7 +19,7 @@ import static org.apache.kafka.streams.StreamsConfig.*;
 @EnableKafkaStreams
 public class KafkaStreamsConfig {
 
-    private KafkaConfigProperties kafkaConfigProperties;
+    private final KafkaConfigProperties kafkaConfigProperties;
 
     public KafkaStreamsConfig(KafkaConfigProperties kafkaConfigProperties) {
         this.kafkaConfigProperties = kafkaConfigProperties;

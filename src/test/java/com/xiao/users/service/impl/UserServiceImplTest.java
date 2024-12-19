@@ -1,6 +1,5 @@
 package com.xiao.users.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
@@ -23,7 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Fail.fail;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
@@ -46,7 +46,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testCreateUser() throws JsonProcessingException {
+    void testCreateUser() {
         UserDto userDto = UserUtil.buildUserDto();
 
         userService.createUser(userDto);
@@ -62,7 +62,7 @@ class UserServiceImplTest {
         try {
             userService.createUser(userDto);
             fail("Should throw exception");
-        } catch (RuntimeException | JsonProcessingException ex) {
+        } catch (RuntimeException ex) {
             assertEquals(ex.getMessage(), "exception");
         }
 
@@ -98,11 +98,11 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testFindAllUser(){
+    void testFindAllUser() {
 
         List<User> userList = Arrays.asList(UserUtil.buildUser(), UserUtil.buildUser());
         Page<User> expectedPage = new PageImpl<>(userList, PageRequest.of(0, 10), userList.size());
-        when(userRepository.findAll(PageRequest.of(0,10))).thenReturn(expectedPage);
+        when(userRepository.findAll(PageRequest.of(0, 10))).thenReturn(expectedPage);
 
         Page<UserDto> actualPage = userService.findAllUser(0, 10);
         Page<UserDto> expectedResult = expectedPage.map(userMapper::userToUserDto);
@@ -115,34 +115,34 @@ class UserServiceImplTest {
         assertEquals(expectedResult.hasNext(), actualPage.hasNext());
         assertEquals(expectedResult.hasPrevious(), actualPage.hasPrevious());
 
-        verify(userRepository, times(1)).findAll(PageRequest.of(0,10));
+        verify(userRepository, times(1)).findAll(PageRequest.of(0, 10));
     }
 
     @Test
-    void testFindAllUser_whenUserRepositoryGotException(){
-        when(userRepository.findAll(PageRequest.of(0,10))).thenThrow(new RuntimeException("exception"));
+    void testFindAllUser_whenUserRepositoryGotException() {
+        when(userRepository.findAll(PageRequest.of(0, 10))).thenThrow(new RuntimeException("exception"));
 
         try {
-            userService.findAllUser(0,10);
+            userService.findAllUser(0, 10);
             fail("Should throw exception");
         } catch (RuntimeException ex) {
             assertEquals(ex.getMessage(), "exception");
         }
 
-        verify(userRepository, times(1)).findAll(PageRequest.of(0,10));
+        verify(userRepository, times(1)).findAll(PageRequest.of(0, 10));
     }
 
 
     @Test
-    void testUpdateUser() throws JsonProcessingException {
+    void testUpdateUser() {
         Long userIdToUpdate = 2L;
         User existingUser = UserUtil.buildUser();
         existingUser.setId(userIdToUpdate);
 
         UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
-        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
-        userUpdate.setPassword(userUpdate.getPassword()+"_updated");
-        userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
+        userUpdate.setUsername(userUpdate.getUsername() + "_updated");
+        userUpdate.setPassword(userUpdate.getPassword() + "_updated");
+        userUpdate.setEmailAddress(userUpdate.getEmailAddress() + "_updated");
         userUpdate.setId(userIdToUpdate);
 
         when(userRepository.findById(userIdToUpdate)).thenReturn(Optional.of(existingUser));
@@ -162,9 +162,9 @@ class UserServiceImplTest {
         Long userIdToUpdate = 2L;
 
         UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
-        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
-        userUpdate.setPassword(userUpdate.getPassword()+"_updated");
-        userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
+        userUpdate.setUsername(userUpdate.getUsername() + "_updated");
+        userUpdate.setPassword(userUpdate.getPassword() + "_updated");
+        userUpdate.setEmailAddress(userUpdate.getEmailAddress() + "_updated");
         userUpdate.setId(userIdToUpdate);
 
         when(userRepository.findById(userIdToUpdate)).thenReturn(Optional.empty());
@@ -184,9 +184,9 @@ class UserServiceImplTest {
         existingUser.setId(userIdToUpdate);
 
         UserUpdateDto userUpdate = UserUtil.buildUserUpdateDto();
-        userUpdate.setUsername(userUpdate.getUsername()+"_updated");
-        userUpdate.setPassword(userUpdate.getPassword()+"_updated");
-        userUpdate.setEmailAddress(userUpdate.getEmailAddress()+"_updated");
+        userUpdate.setUsername(userUpdate.getUsername() + "_updated");
+        userUpdate.setPassword(userUpdate.getPassword() + "_updated");
+        userUpdate.setEmailAddress(userUpdate.getEmailAddress() + "_updated");
         userUpdate.setId(userIdToUpdate);
 
         when(userRepository.findById(userIdToUpdate)).thenReturn(Optional.of(existingUser));
@@ -197,8 +197,6 @@ class UserServiceImplTest {
             fail("Should throw exception");
         } catch (RuntimeException ex) {
             assertEquals(ex.getMessage(), "exception");
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
 
         verify(userRepository, times(1)).findById(userIdToUpdate);
@@ -206,7 +204,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testDeleteUser_204(){
+    void testDeleteUser_204() {
         Long userId = 1L;
         User user = UserUtil.buildUser();
         user.setId(userId);
@@ -245,8 +243,6 @@ class UserServiceImplTest {
             fail("Should throw exception");
         } catch (RuntimeException ex) {
             assertThrows(RuntimeException.class, () -> userService.deleteUser(userId));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
     }
 }

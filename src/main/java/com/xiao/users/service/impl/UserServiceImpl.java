@@ -1,8 +1,5 @@
 package com.xiao.users.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xiao.users.kafka.KafkaConfigProperties;
 import com.xiao.users.constants.UserConstants;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
@@ -15,8 +12,8 @@ import com.xiao.users.service.UserService;
 import com.xiao.users.service.UserSyncService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -43,8 +40,9 @@ public class UserServiceImpl implements UserService {
         this.userSyncService = userSyncService;
     }
 
+    @Transactional
     @Override
-    public void createUser(UserDto userDto) throws JsonProcessingException {
+    public void createUser(UserDto userDto) {
         User user = userMapper.userDtoToUser(userDto);
         User createdUser = userRepository.save(user);
         userSyncService.syncUserToAuthServer(createdUser, UserConstants.ActionType.CREATE);
@@ -65,8 +63,9 @@ public class UserServiceImpl implements UserService {
         return usersPage.map(userMapper::userToUserDto);
     }
 
+    @Transactional
     @Override
-    public UserDto updateUser(Long userId, UserUpdateDto userDto) throws JsonProcessingException {
+    public UserDto updateUser(Long userId, UserUpdateDto userDto) {
         User existingUser = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", String.valueOf(userId))
         );
@@ -77,8 +76,9 @@ public class UserServiceImpl implements UserService {
         return userMapper.userToUserDto(updatedUser);
     }
 
+    @Transactional
     @Override
-    public void deleteUser(Long id) throws JsonProcessingException {
+    public void deleteUser(Long id) {
         User deleteUser = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", String.valueOf(id))
         );

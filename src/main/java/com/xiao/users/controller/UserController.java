@@ -1,6 +1,5 @@
 package com.xiao.users.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xiao.users.constants.UserConstants;
 import com.xiao.users.dto.ResponseDto;
 import com.xiao.users.dto.UserDto;
@@ -20,14 +19,14 @@ public class UserController {
 
     private final UserService userService;
 
-    private Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody UserDto userDto) throws JsonProcessingException {
+    public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody UserDto userDto) {
         userService.createUser(userDto);
         logger.info("Create user successfully!");
         return ResponseEntity
@@ -55,7 +54,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto) throws JsonProcessingException {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto) {
         UserDto userResponse = userService.updateUser(id, userUpdateDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -63,7 +62,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) throws JsonProcessingException {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }

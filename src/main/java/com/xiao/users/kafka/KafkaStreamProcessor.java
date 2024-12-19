@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class KafkaStreamProcessor {
 
-    private KafkaConfigProperties kafkaConfigProperties;
+    private final KafkaConfigProperties kafkaConfigProperties;
 
     public KafkaStreamProcessor(KafkaConfigProperties kafkaConfigProperties) {
         this.kafkaConfigProperties = kafkaConfigProperties;

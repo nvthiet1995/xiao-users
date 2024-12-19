@@ -8,12 +8,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class KafkaConfigProperties {
 
-  @Value(value = "${info.app.name}")
-  private String appId;
+    @Value(value = "${info.app.name}")
+    private String appId;
 
-  @Value(value = "${spring.kafka.bootstrap-servers}")
-  private String bootstrapAddress;
+    @Value(value = "${spring.kafka.bootstrap-servers}")
+    private String bootstrapAddress;
 
-  @Value(value = "${kafka-topic.user-sync}")
-  private String userSyncTopic;
+    @Value(value = "${kafka-topic.user-sync}")
+    private String userSyncTopic;
 }

@@ -14,7 +14,7 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
-    private KafkaConfigProperties kafkaConfigProperties;
+    private final KafkaConfigProperties kafkaConfigProperties;
 
     public KafkaProducerConfig(KafkaConfigProperties kafkaConfigProperties) {
         this.kafkaConfigProperties = kafkaConfigProperties;
