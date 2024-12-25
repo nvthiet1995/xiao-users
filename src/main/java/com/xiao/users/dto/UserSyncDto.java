@@ -2,6 +2,8 @@ package com.xiao.users.dto;
 
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 public class UserSyncDto {
 
@@ -13,4 +15,5 @@ public class UserSyncDto {
 
     private String emailAddress;
 
+    private Set<RoleDto> roles;
 }
