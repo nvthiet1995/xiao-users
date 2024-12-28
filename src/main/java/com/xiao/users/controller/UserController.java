@@ -4,7 +4,7 @@ import com.xiao.users.constants.UserConstants;
 import com.xiao.users.dto.ResponseDto;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
-import com.xiao.users.service.IUserService;
+import com.xiao.users.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,12 +25,12 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "User", description = "User management APIs")
 public class UserController {
 
-    private final IUserService iUserService;
+    private final UserService userService;
 
-    private Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    public UserController(IUserService iUserService) {
-        this.iUserService = iUserService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @Operation(
@@ -40,7 +40,7 @@ public class UserController {
     )
     @PostMapping
     public ResponseEntity<ResponseDto> createAccount(@Valid @RequestBody UserDto userDto) {
-        iUserService.createUser(userDto);
+        userService.createUser(userDto);
         logger.info("Create user successfully!");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -56,7 +56,7 @@ public class UserController {
     public ResponseEntity<UserDto> findUserById(
             @Parameter(description = "ID of the item to be obtained", required = true)
             @PathVariable("id") Long userId) {
-        UserDto userDto = iUserService.findUserById(userId);
+        UserDto userDto = userService.findUserById(userId);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userDto);
@@ -74,7 +74,7 @@ public class UserController {
             @Parameter(description = "The number of elements on the page.")
             @RequestParam(defaultValue = "10") int pageSize
     ) {
-        Page<UserDto> userDtos = iUserService.findAllUser(pages, pageSize);
+        Page<UserDto> userDtos = userService.findAllUser(pages, pageSize);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userDtos);
@@ -89,7 +89,7 @@ public class UserController {
     public ResponseEntity<UserDto> updateUser(
             @Parameter(description = "ID of the item to be obtained", required = true)
             @PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto){
-        UserDto userResponse = iUserService.updateUser(id, userUpdateDto);
+        UserDto userResponse = userService.updateUser(id, userUpdateDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userResponse);
@@ -104,7 +104,7 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(
             @Parameter(description = "ID of the item to be obtained", required = true)
             @PathVariable Long id){
-        iUserService.deleteUser(id);
+        userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
 }
