@@ -11,13 +11,10 @@ import java.util.Set;
 public class UserUtil {
 
     public static UserUpdateDto buildUserUpdateDto() {
-        Set<RoleDto> roleDtoSet = new HashSet<>();
-        roleDtoSet.add(RoleUtil.buildRoleDto());
         return UserUpdateDto.builder()
                 .username("abc_update")
                 .emailAddress("abc_update@gmail.com")
                 .password("passwordUpdate")
-                .roles(roleDtoSet)
                 .build();
     }
 

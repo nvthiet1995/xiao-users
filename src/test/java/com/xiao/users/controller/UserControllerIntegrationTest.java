@@ -97,6 +97,7 @@ class UserControllerIntegrationTest {
     @WithMockUser
     void testCreateAccount_400_when_missing_roles() throws Exception {
         UserDto userDto = UserUtil.buildUserDto();
+        userDto.setRoles(null);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .with(csrf())
