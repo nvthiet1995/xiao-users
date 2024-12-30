@@ -1,8 +1,12 @@
 package com.xiao.users.util;
 
+import com.xiao.users.dto.RoleDto;
 import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.entity.User;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class UserUtil {
 
@@ -15,10 +19,13 @@ public class UserUtil {
     }
 
     public static UserDto buildUserDto() {
+        Set<RoleDto> roleDtoSet = new HashSet<>();
+        roleDtoSet.add(RoleUtil.buildRoleDto());
         return UserDto.builder()
                 .username("abc")
                 .emailAddress("abc@gmail.com")
                 .password("abcPassword")
+                .roles(roleDtoSet)
                 .build();
     }
 

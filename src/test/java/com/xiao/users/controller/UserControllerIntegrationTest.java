@@ -18,7 +18,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -51,6 +53,9 @@ class UserControllerIntegrationTest {
     @Autowired
     private RoleRepository roleRepository;
 
+    @MockBean
+    private JwtDecoder jwtDecoder;
+
     @BeforeEach
     public void tearDown(){
         userRepository.deleteAll();
@@ -60,24 +65,6 @@ class UserControllerIntegrationTest {
     @WithMockUser
     void testCreateAccount_201() throws Exception {
         UserDto userDto = UserUtil.buildUserDto();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/users")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.asJsonString(userDto))
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.statusCode").value("201"))
-                .andExpect(jsonPath("$.statusMsg").value("User created successfully"));
-    }
-
-    @Test
-    @WithMockUser
-    void testCreateAccount_201_whenSetRoles() throws Exception {
-        UserDto userDto = UserUtil.buildUserDto();
-        Set<RoleDto> roleDtoSet = new HashSet<>();
-        roleDtoSet.add(RoleUtil.buildRoleDto());
-        userDto.setRoles(roleDtoSet);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .with(csrf())
@@ -104,6 +91,23 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Your Method Argument Is Not Valid"))
                 .andExpect(jsonPath("$.title").value("VALIDATION ERROR"))
                 .andExpect(jsonPath("$.errors.username").value("Missing username"));
+    }
+
+    @Test
+    @WithMockUser
+    void testCreateAccount_400_when_missing_roles() throws Exception {
+        UserDto userDto = UserUtil.buildUserDto();
+        userDto.setRoles(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.asJsonString(userDto))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Your Method Argument Is Not Valid"))
+                .andExpect(jsonPath("$.title").value("VALIDATION ERROR"))
+                .andExpect(jsonPath("$.errors.roles").value("Role can't empty!"));
     }
 
     @Test
