@@ -4,7 +4,7 @@ import com.xiao.users.dto.UserDto;
 import com.xiao.users.dto.UserUpdateDto;
 import org.springframework.data.domain.Page;
 
-public interface IUserService {
+public interface UserService {
 
     void createUser(UserDto userDto);
 
