@@ -22,6 +22,7 @@ public class UserDto {
     private String password;
 
     @Email(message = "Email is not valid")
+    @NotEmpty(message = "Email cannot be empty")
     private String emailAddress;
 
     private Set<RoleDto> roles;
