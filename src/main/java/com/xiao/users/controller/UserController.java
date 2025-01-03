@@ -101,10 +101,10 @@ public class UserController {
             tags = {"user", "delete"}
     )
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteUser(
+    public ResponseEntity<ResponseDto> deleteUser(
             @Parameter(description = "ID of the item to be obtained", required = true)
             @PathVariable Long id){
         iUserService.deleteUser(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("200", "User deleted successfully"));
     }
 }
