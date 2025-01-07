@@ -373,4 +373,18 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value(String.format("User not found with the given input data id : '%s'", userId)));
     }
 
+    @Test
+    @WithMockUser
+    void testDeleteUser_whenUserIdIsBlank() throws Exception {
+        String userId = " ";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/", userId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("VALIDATION ERROR"))
+                .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.errors.deleteUser.id").value("User ID must be numeric and not empty"));
+    }
 }
