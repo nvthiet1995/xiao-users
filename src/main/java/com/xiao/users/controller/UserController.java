@@ -7,20 +7,19 @@ import com.xiao.users.dto.UserUpdateDto;
 import com.xiao.users.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Validated
 @RequestMapping("/users")
 @Tag(name = "User", description = "User management APIs")
 public class UserController {
@@ -103,8 +102,8 @@ public class UserController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteUser(
             @Parameter(description = "ID of the item to be obtained", required = true)
-            @PathVariable Long id){
-        iUserService.deleteUser(id);
+            @PathVariable @Pattern(regexp = "\\d+", message = "User ID must be numeric and not empty") String id){
+        iUserService.deleteUser(Long.parseLong(id));
         return ResponseEntity.ok().build();
     }
 }

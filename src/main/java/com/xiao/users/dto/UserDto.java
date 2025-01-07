@@ -3,17 +3,18 @@ package com.xiao.users.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 import java.util.Set;
 
 @Data
-@Builder
 public class UserDto {
 
     private Long id;
 
+    @Setter(AccessLevel.NONE)
     @NotEmpty(message = "Missing username")
     private String username;
 
@@ -25,4 +26,15 @@ public class UserDto {
     private String emailAddress;
 
     private Set<RoleDto> roles;
+
+    public UserDto(String username, String password, String emailAddress, Set<RoleDto> roles) {
+        this.setUsername(username);
+        this.password = password;
+        this.emailAddress = emailAddress;
+        this.roles = roles;
+    }
+
+    public void setUsername(String username) {
+        this.username = (username != null && !username.trim().isEmpty()) ? username.trim() : null;
+    }
 }

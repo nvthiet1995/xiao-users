@@ -1,5 +1,6 @@
 package com.xiao.users.exception;
 import com.xiao.users.dto.ErrorResponseDto;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -7,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import java.util.HashMap;
 import java.util.List;
@@ -67,5 +70,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 null
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponseDto> handleValidationExceptions(ConstraintViolationException ex) {
+        Map<String, String> validationErrors = new HashMap<>();
+        ex.getConstraintViolations().forEach(violation -> {
+            String fieldName = violation.getPropertyPath().toString();
+            String errorMessage = violation.getMessage();
+            validationErrors.put(fieldName, errorMessage);
+        });
+
+        ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
+                ARGUMENT_NOT_VALID_MESSAGE,
+                HttpStatus.BAD_REQUEST,
+                ARGUMENT_NOT_VALID_TITLE,
+                validationErrors,
+                null
+        );
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
 }
